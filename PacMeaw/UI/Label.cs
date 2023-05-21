@@ -5,18 +5,21 @@ namespace GameLib
 {
     public class Label : Group
     {
-        public string FontName { get; init; } = "Thasadith-Regular.ttf";
-        public Color TextColor { get; init; } = Color.Blue;
+        public uint fontsize { get; init; } = 100;
+        public string FontName { get; init; } = "Berlin Sans FB Demi Bold.ttf";
+        public Color TextColor { get; init; } = new Color(73, 95, 65);
         public Color BgColor { get; init; } = Color.White;
         public float HMargin { get; init; } = 0;
         public float VMargin { get; init; } = 0;
         public Label(string str, string fontName, uint fontsize)
         {
             this.FontName = fontName;
+            this.fontsize = fontsize;
             Create(str, fontsize);
         }
         public Label(string str, uint fontsize)
         {
+
             Create(str, fontsize);
         }
         private void Create(string str, uint fontsize)
@@ -30,11 +33,17 @@ namespace GameLib
             var rect = new RectangleEntity(
                             new Vector2f(text.TotalWidth() + 2 * HMargin, 
                                         text.TotalHeight() + 2 * VMargin));
-            rect.FillColor = BgColor;
+            //rect.FillColor = BgColor;
 
-            this.Add(rect);
+            //this.Add(rect);
             this.Add(text);
-            DebugPositions(text);
+            //DebugPositions(text);
+        }
+
+        public void SetText(string str)
+        {
+            
+            Create(str, this.fontsize);
         }
 
         private void DebugPositions(TextEntity text)
