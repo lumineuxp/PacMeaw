@@ -14,7 +14,7 @@ namespace PacMeaw
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             //ApplicationConfiguration.Initialize();
-            //new Game().GameMain();
+            new Game().GameMain();
 
             ApplicationConfiguration.Initialize();
 
@@ -22,8 +22,8 @@ namespace PacMeaw
             //Home home = new Home();
             //Application.Run(home);
 
-            Score score = new Score();
-            Application.Run(score);
+            //Score score = new Score();
+            //Application.Run(score);
 
         }
     }
