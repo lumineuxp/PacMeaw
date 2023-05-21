@@ -58,5 +58,10 @@ namespace GameLib
                 return -1;
             return tileArray[index.Y, index.X];
         }
+
+        public void SetTileCode(Vector2i index , int code)
+        {
+            tileArray[index.Y, index.X] = code;
+        }
     }
 }

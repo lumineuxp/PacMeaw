@@ -15,19 +15,19 @@ namespace PacMeaw
         AnimationStates states;
         public Player() 
         {
-            var texture = TextureCache.Get("Sprite/cat/cat1.png");
+            var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
             var sprite = new SpriteEntity();
             Add(sprite);
             sprite.Origin = new Vector2f(16,23);
             sprite.Scale = new Vector2f(3, 3);
 
-            var fragments = FragmentArray.Create(texture, 31,32);
+            var fragments = FragmentArray.Create(texture, 32,32);
             var duration = 0.75f;
-            var stay = new Animation(sprite, fragments.SubArray(6, 1), duration);
-            var left = new Animation(sprite, fragments.SubArray(18, 3), duration);
-            var right = new Animation(sprite, fragments.SubArray(30, 3), duration);
-            var down = new Animation(sprite, fragments.SubArray(6, 3), duration);
-            var up = new Animation(sprite, fragments.SubArray(42, 3), duration);
+            var stay = new Animation(sprite, fragments.SubArray(0, 1), duration);
+            var left = new Animation(sprite, fragments.SubArray(3, 3), duration);
+            var right = new Animation(sprite, fragments.SubArray(6, 3), duration); 
+            var up = new Animation(sprite, fragments.SubArray(9, 3), duration);
+            var down = new Animation(sprite, fragments.SubArray(0, 3), duration);
 
             states = new AnimationStates(stay, left, right, up ,down);
             Add(states);

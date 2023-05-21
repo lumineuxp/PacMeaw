@@ -1,9 +1,9 @@
 ﻿using GameLib;
-using SFML.Window;
-using SFML.System;
-using System.Collections.Generic;
 using SFML.Graphics;
+using SFML.System;
+using SFML.Window;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace PacMeaw
@@ -12,26 +12,28 @@ namespace PacMeaw
     {
         GameWindow window = new GameWindow(new VideoMode(1280, 1024), "PacMeaw");
         //window.BackgroundColor = "#88c46c"
-        
+
 
         Group allObjs = new Group();
         Group visual = new Group();
         FragmentArray fragments;
         TileMap<SpriteEntity> tileMap;
         Player player;
+        TileMap<SpriteEntity> itemMap;
+        FragmentArray itemFragments;
 
         const int scaling = 4;
         const int tileSize = 16 * scaling;
-        Vector2f scailngVector = new Vector2f(scaling, scaling); 
+        Vector2f scailngVector = new Vector2f(scaling, scaling);
 
 
         public Game()
         {
             visual.Position = new Vector2f(75, 75);
             //visual.Add(new SpriteEntity(""));
-            fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16,16,12, 12*11);
+            fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
 
-            var tileArray = new int[13, 17] 
+            var tileArray = new int[13, 17]
             {
                 { 44, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,46},
                 { 56,  1,  0,  0,  1,  0,  0,  0, 59,  1,  0,  0,  5,  0,  0,  1,58},
@@ -51,22 +53,41 @@ namespace PacMeaw
             tileMap = new TileMap<SpriteEntity>(tileSize, tileArray, CreateTile);
             visual.Add(tileMap);
 
+
+            // 0 - coin , 1 - wall , 2 - empty , 3 - fish
+            itemFragments = FragmentArray.Create("Sprite/coin/coin2.png", 315, 250, 1, 2);
+            var itemArray = new int[13, 17]
+            {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1 },
+                { 1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+                { 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 },
+                { 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
+                { 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
+                { 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+                { 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0, 1, 0, 1 },
+                { 1, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1 },
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1 },
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+            };
+            itemMap = new TileMap<SpriteEntity>(tileSize, itemArray, CreateItem);
+            visual.Add(itemMap);
+
             player = new Player();
-            player.Position = new Vector2f(50,50);
+            player.Position = new Vector2f(50, 50);
             visual.Add(player);
         }
 
         public void GameMain()
         {
             allObjs.Add(visual);
-            allObjs.Add(this); //สำคัญในการดัก event
-
-            
+            allObjs.Add(this); //สำคัญในการดัก event       
 
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
-            
         }
 
         Queue<KeyEventArgs> keyQueue = new Queue<KeyEventArgs>();
@@ -98,21 +119,25 @@ namespace PacMeaw
 
             if (!IsAllowMove(direction))
                 return;
-            float speed = 300;
+
+            //EatItem(direction);
+            float speed = 250;
             motion = new LinearMotion(player, speed, direction * tileSize);
 
         }
+
         private bool IsAllowMove(Vector2f direction)
         {
-            Vector2i index = tileMap.CalcIndex(player, direction);
-            return tileMap.IsInside(index) && IsAllowTile(index);
+            Vector2i index = itemMap.CalcIndex(player, direction);
+            return itemMap.IsInside(index) && IsAllowTile(index);
         }
 
         private bool IsAllowTile(Vector2i index)
         {
-            int tileCode = tileMap.GetTileCode(index);
-            int[] edges = { 5, 17,27, 28, 44, 45, 46,47, 56, 57, 58, 59, 68,70, 71, 80, 81, 82,83, 94, 95, 104, 106 };
-            return !edges.Contains(tileCode);
+            int tileCode = itemMap.GetTileCode(index);
+            //int[] edges = { 5, 17, 27, 28, 44, 45, 46, 47, 56, 57, 58, 59, 68, 70, 71, 80, 81, 82, 83, 94, 95, 104, 106, 107 };
+            //return !edges.Contains(tileCode);
+            return tileCode != 1;
         }
 
         public override void PhysicsUpdate(float fixTime)
@@ -120,6 +145,8 @@ namespace PacMeaw
             base.PhysicsUpdate(fixTime);
             motion.Update(fixTime);
             SmoothMovement();
+
+           
         }
 
         private SpriteEntity CreateTile(int tileCode)
@@ -131,5 +158,28 @@ namespace PacMeaw
             sprite.Scale = scailngVector;
             return sprite;
         }
+
+        private SpriteEntity CreateItem(int tileCode)
+        {
+            var fragment = itemFragments.Fragments[tileCode];
+            var sprite = new SpriteEntity(fragment);
+            sprite.Origin = ((FloatRect)fragment.Rect).GetSize() / 2;
+            sprite.Scale = scailngVector / 20;
+            return sprite;
+        }
+
+        private void EatItem(Vector2f direction)
+        {
+            Vector2i index = itemMap.CalcIndex(player, direction);
+            int tileCode = itemMap.GetTileCode(index);
+            if (tileCode == 0)
+            {
+                itemMap.SetTileCode(index, 2);
+            }
+            itemMap.CreateTileMap();
+           
+        }
+
+
     }
 }
