@@ -19,8 +19,11 @@ namespace PacMeaw
             ApplicationConfiguration.Initialize();
 
             // สร้างและแสดงหน้า Home
-            Home home = new Home();
-            Application.Run(home);
+            //Home home = new Home();
+            //Application.Run(home);
+
+            Score score = new Score();
+            Application.Run(score);
 
         }
     }

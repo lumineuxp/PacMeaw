@@ -32,10 +32,9 @@ namespace PacMeaw
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Home));
             GameName = new System.Windows.Forms.Label();
+            button1 = new System.Windows.Forms.Button();
             pictureBox1 = new System.Windows.Forms.PictureBox();
-            pictureBox2 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             SuspendLayout();
             // 
             // GameName
@@ -43,50 +42,54 @@ namespace PacMeaw
             GameName.BackColor = System.Drawing.Color.Transparent;
             GameName.Font = new System.Drawing.Font("Showcard Gothic", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
             GameName.ForeColor = System.Drawing.Color.White;
-            GameName.Location = new System.Drawing.Point(232, 80);
+            GameName.Location = new System.Drawing.Point(265, 107);
             GameName.Name = "GameName";
-            GameName.Size = new System.Drawing.Size(242, 43);
+            GameName.Size = new System.Drawing.Size(277, 57);
             GameName.TabIndex = 0;
             GameName.Text = "PacMeaw";
             // 
+            // button1
+            // 
+            button1.BackColor = System.Drawing.Color.Transparent;
+            button1.Cursor = System.Windows.Forms.Cursors.Hand;
+            button1.FlatAppearance.BorderSize = 0;
+            button1.FlatAppearance.MouseDownBackColor = System.Drawing.Color.Transparent;
+            button1.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            button1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            button1.Image = (System.Drawing.Image)resources.GetObject("button1.Image");
+            button1.Location = new System.Drawing.Point(243, 215);
+            button1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            button1.Name = "button1";
+            button1.Size = new System.Drawing.Size(298, 93);
+            button1.TabIndex = 2;
+            button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
+            // 
             // pictureBox1
             // 
-            pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            pictureBox1.Image = (System.Drawing.Image)resources.GetObject("pictureBox1.Image");
-            pictureBox1.Location = new System.Drawing.Point(213, 167);
+            pictureBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            pictureBox1.Image = Properties.Resources.background;
+            pictureBox1.Location = new System.Drawing.Point(0, 0);
+            pictureBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new System.Drawing.Size(261, 77);
-            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            pictureBox1.TabIndex = 1;
+            pictureBox1.Size = new System.Drawing.Size(800, 451);
+            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 3;
             pictureBox1.TabStop = false;
-            pictureBox1.Click += pictureBox1_Click;
-            // 
-            // pictureBox2
-            // 
-            pictureBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            pictureBox2.Image = Properties.Resources.background;
-            pictureBox2.Location = new System.Drawing.Point(0, 0);
-            pictureBox2.Name = "pictureBox2";
-            pictureBox2.Size = new System.Drawing.Size(700, 338);
-            pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            pictureBox2.TabIndex = 2;
-            pictureBox2.TabStop = false;
             // 
             // Home
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
+            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             AutoSize = true;
             BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            ClientSize = new System.Drawing.Size(700, 338);
-            Controls.Add(pictureBox1);
+            ClientSize = new System.Drawing.Size(800, 451);
+            Controls.Add(button1);
             Controls.Add(GameName);
-            Controls.Add(pictureBox2);
-            Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            Controls.Add(pictureBox1);
             Name = "Home";
             Text = "Home";
             ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
             ResumeLayout(false);
         }
 
@@ -95,7 +98,7 @@ namespace PacMeaw
         #endregion
 
         private System.Windows.Forms.Label GameName;
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
-        private System.Windows.Forms.PictureBox pictureBox2;
     }
 }
