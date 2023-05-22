@@ -51,8 +51,7 @@ namespace PacMeaw
                 states.Animate(3);
             else if (direction.Y > 0)
                 states.Animate(4);
-           
-
+          
   
         }
     }
