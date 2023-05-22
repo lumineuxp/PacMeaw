@@ -13,6 +13,7 @@ namespace PacMeaw
     public class Player : KinematicBody
     {
         AnimationStates states;
+        CollisionObj collisionObj;
         public Player() 
         {
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
@@ -31,6 +32,19 @@ namespace PacMeaw
 
             states = new AnimationStates(stay, left, right, up ,down);
             Add(states);
+
+            var shape = new CollisionRect(sprite.GetGlobalBounds().AdjustSize(0.4f, 0.5f));
+            collisionObj = new CollisionObj(shape);
+            collisionObj.DebugDraw = false;
+            collisionObj.OnCollide += OnCollide;
+            Add(collisionObj);
+
+        }
+
+        private void OnCollide(CollisionObj objB, CollideData collideData)
+        {
+            //var enemy = objB.Parent as Enemy;
+            //enemy!.Detach();
         }
 
         public override void PhysicsUpdate(float fixTime)
