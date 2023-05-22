@@ -5,6 +5,8 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+//using System.Windows.Forms;
+
 
 namespace PacMeaw
 {
@@ -21,24 +23,32 @@ namespace PacMeaw
         FragmentArray itemFragments;
         Enemy enemy;
 
+        ScoreCount score = new ScoreCount();
+        Label scoreLabel;
+
         const int scaling = 4;
         const int tileSize = 16 * scaling;
         Vector2f scailngVector = new Vector2f(scaling, scaling);
+        int i = 0;
 
         Random random = new Random();
 
 
         public Game()
         {
-            visual.Position = new Vector2f(75, 75);
-            //visual.Add(new SpriteEntity(""));
+            score.SetScore(0);
+            scoreLabel = new Label(String.Format("Score: {0}", score.GetScore()), "Early GameBoy.ttf", 35);
+            scoreLabel.Position = new Vector2f(750, 25);
+            allObjs.Add(scoreLabel);
+
+            visual.Position = new Vector2f(75, 100);
             fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
 
             var tileArray = new int[13, 17]
             {
                 { 44, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,46},
-                { 56,  1,  0,  0,  1,  0,  0,  0, 59,  1,  0,  0,  5,  0,  0,  1,58},
-                { 56,  1,  5,  5,  5,  0,107,  0, 71,  1,106,  1,  5,  0, 92,  0,58},
+                { 56,  0,  0,  0,  1,  0,  0,  0, 59,  1,  0,  0,  5,  0,  0,  1,58},
+                { 56,  1,  5,  5,00  5,  0,107,  0, 71,  1,106,  1,  5,  0, 92,  0,58},
                 { 56,  1, 95,  0,  0,  0, 17,  0,  0,  0,  0,  0, 83,  0,104,  0,58},
                 { 56,  1,  0,  0, 27,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,58},
                 { 68, 45, 82,  0, 28,  0, 44, 82,  1, 80, 46,  0,  1,  0, 80, 45,70},
@@ -56,16 +66,16 @@ namespace PacMeaw
 
 
             // 0 - coin , 1 - fish , 2 - wall , 3 - empty
-            itemFragments = FragmentArray.Create("Sprite/item2.png", 417, 417, 2, 2*2);
+            itemFragments = FragmentArray.Create("Sprite/item.png", 417, 417, 2, 2 * 2);
             var itemArray = new int[13, 17]
             {
                 { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 },
-                { 2, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2 },
+                { 2, 3, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 2 },
                 { 2, 0, 2, 2, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2, 0, 2 },
                 { 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2 },
                 { 2, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 },
-                { 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2 },
-                { 3, 3, 3, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 3, 3, 3 },
+                { 2, 2, 2, 0, 2, 0, 2, 2, 3, 2, 2, 0, 0, 0, 2, 2, 2 },
+                { 3, 3, 3, 0, 2, 0, 2, 3, 3, 3, 2, 0, 0, 0, 3, 3, 3 },
                 { 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2 },
                 { 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 },
                 { 2, 0, 2, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 0, 2 },
@@ -217,11 +227,35 @@ namespace PacMeaw
             if (tileCode == 0 ^ tileCode == 1)
             {
                 itemMap.SetTileCode(index, 3);
-            }
-            itemMap.Clear();
-            itemMap.CreateTileMap();
+                itemMap.Clear();
+                itemMap.CreateTileMap();
 
+                CountScore(tileCode);
+            }
+
+            if (!itemMap.CheckExistItemOnTile() & i == 0 )
+            {
+                window.SetVisible(false);
+                Score scoreboard = new Score();
+                scoreboard.SetScore(score.GetScore());
+                scoreboard.Show();
+
+                i += 1;
+            }
         }
+        public void CountScore(int tileCode)
+        {
+            if (tileCode == 0)
+                score.AddToScore(10);
+            else if (tileCode == 1)
+                score.AddToScore(100);
+
+            scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
+        }
+
+        
+
+
 
     }
 }
