@@ -28,7 +28,7 @@ namespace PacMeaw
         Vector2f scailngVector = new Vector2f(scaling, scaling);
 
         Random random = new Random();
-        float timer = 0;
+
 
         public Game()
         {
@@ -92,7 +92,7 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-
+           
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
@@ -180,7 +180,6 @@ namespace PacMeaw
 
         public override void PhysicsUpdate(float fixTime)
         {
-            timer += fixTime;
             base.PhysicsUpdate(fixTime);
             if (enemyMotion == null || enemyMotion.IsFinished())
             {
@@ -192,13 +191,6 @@ namespace PacMeaw
                 motion.Update(fixTime);
                 SmoothMovement();
             }
-
-            if (timer >= 10)
-            {
-                timer = 0;
-                Start();
-            }
-
 
         }
         private SpriteEntity CreateTile(int tileCode)
