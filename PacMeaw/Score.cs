@@ -15,6 +15,7 @@ namespace PacMeaw
         public Score()
         {
             InitializeComponent();
+
         }
 
         private void RestartBtn_Click(object sender, EventArgs e)
@@ -22,5 +23,6 @@ namespace PacMeaw
             this.Close();
             new Game().GameMain();
         }
+        
     }
 }

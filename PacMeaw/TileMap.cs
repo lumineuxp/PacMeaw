@@ -2,6 +2,7 @@
 using SFML.Graphics;
 using SFML.System;
 using System;
+using System.Linq;
 
 namespace GameLib
 {
@@ -62,6 +63,25 @@ namespace GameLib
         public void SetTileCode(Vector2i index , int code)
         {
             tileArray[index.Y, index.X] = code;
+        }
+
+        public bool CheckExistItemOnTile()
+        {
+            bool exist;
+            bool containsZero = this.tileArray.Cast<int>().Any(item => item == 0);
+            bool containsOne = this.tileArray.Cast<int>().Any(item => item == 1);
+
+            if (!containsZero && !containsOne)
+            {
+                exist = false;
+            }
+            else
+            {
+                exist = true;
+            }
+
+
+            return exist;
         }
     }
 }

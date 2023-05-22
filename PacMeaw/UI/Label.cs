@@ -6,8 +6,8 @@ namespace GameLib
     public class Label : Group
     {
         public uint fontsize { get; init; } = 100;
-        public string FontName { get; init; } = "Berlin Sans FB Demi Bold.ttf";
-        public Color TextColor { get; init; } = new Color(73, 95, 65);
+        public string FontName { get; init; } = "Early GameBoy.ttf";
+        public Color TextColor { get; init; } = new Color(18, 48, 107);
         public Color BgColor { get; init; } = Color.White;
         public float HMargin { get; init; } = 0;
         public float VMargin { get; init; } = 0;
