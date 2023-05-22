@@ -15,7 +15,12 @@ namespace PacMeaw
         public Score()
         {
             InitializeComponent();
-
+         
+        }
+        
+        public void SetScore(int score)
+        {
+            NumScoreLabel.Text = score.ToString();
         }
 
         private void RestartBtn_Click(object sender, EventArgs e)
