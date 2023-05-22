@@ -39,17 +39,17 @@
             // 
             LevelLabel.AutoSize = true;
             LevelLabel.Font = new System.Drawing.Font("Showcard Gothic", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            LevelLabel.Location = new System.Drawing.Point(290, 9);
+            LevelLabel.Location = new System.Drawing.Point(261, 9);
             LevelLabel.Name = "LevelLabel";
-            LevelLabel.Size = new System.Drawing.Size(193, 59);
+            LevelLabel.Size = new System.Drawing.Size(262, 59);
             LevelLabel.TabIndex = 0;
-            LevelLabel.Text = "Level 1";
+            LevelLabel.Text = "PacMeaw";
             // 
             // ScoreLabel
             // 
             ScoreLabel.AutoSize = true;
             ScoreLabel.Font = new System.Drawing.Font("Showcard Gothic", 25.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            ScoreLabel.Location = new System.Drawing.Point(238, 159);
+            ScoreLabel.Location = new System.Drawing.Point(261, 159);
             ScoreLabel.Name = "ScoreLabel";
             ScoreLabel.Size = new System.Drawing.Size(188, 54);
             ScoreLabel.TabIndex = 1;
@@ -58,7 +58,7 @@
             // NumScoreLabel
             // 
             NumScoreLabel.Font = new System.Drawing.Font("Showcard Gothic", 25.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            NumScoreLabel.Location = new System.Drawing.Point(432, 159);
+            NumScoreLabel.Location = new System.Drawing.Point(455, 159);
             NumScoreLabel.Name = "NumScoreLabel";
             NumScoreLabel.Size = new System.Drawing.Size(133, 54);
             NumScoreLabel.TabIndex = 2;
@@ -71,7 +71,7 @@
             RestartBtn.FlatAppearance.BorderSize = 0;
             RestartBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             RestartBtn.Image = (System.Drawing.Image)resources.GetObject("RestartBtn.Image");
-            RestartBtn.Location = new System.Drawing.Point(323, 300);
+            RestartBtn.Location = new System.Drawing.Point(335, 300);
             RestartBtn.Name = "RestartBtn";
             RestartBtn.Size = new System.Drawing.Size(114, 118);
             RestartBtn.TabIndex = 3;

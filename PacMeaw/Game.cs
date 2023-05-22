@@ -19,10 +19,13 @@ namespace PacMeaw
         Player player;
         TileMap<SpriteEntity> itemMap;
         FragmentArray itemFragments;
+        Enemy enemy;
 
         const int scaling = 4;
         const int tileSize = 16 * scaling;
         Vector2f scailngVector = new Vector2f(scaling, scaling);
+
+        Random random = new Random();
 
 
         public Game()
@@ -76,13 +79,18 @@ namespace PacMeaw
             player = new Player();
             player.Position = new Vector2f(50, 50);
             visual.Add(player);
+
+            enemy = new Enemy();
+            enemy.Position = new Vector2f(50, 50);
+            visual.Add(enemy);
+
         }
 
         public void GameMain()
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-
+           
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
@@ -96,8 +104,8 @@ namespace PacMeaw
             base.KeyPressed(e);
             keyQueue.Enqueue(e);
             SmoothMovement();
-
         }
+
 
         private void SmoothMovement()
         {
@@ -124,10 +132,40 @@ namespace PacMeaw
 
         }
 
+        LinearMotion enemyMotion;
+        public void Start()
+        {
+            float speed = 250;  // ความเร็วของศัตรู
+            Vector2f randomDirection = GetRandomDirection();
+
+            if (IsAllowMoveEnemy(randomDirection))
+            {
+                enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
+            }
+        }
+
+        private Vector2f GetRandomDirection()
+        {
+            Vector2f[] directions = {
+                    new Vector2f(1, 0),   // ขวา
+                    new Vector2f(-1, 0),  // ซ้าย
+                    new Vector2f(0, 1),   // ลง
+                    new Vector2f(0, -1)   // ขึ้น
+             };
+
+            return directions[random.Next(0, 4)];
+        }
+
+        private bool IsAllowMoveEnemy(Vector2f direction)
+        {
+            Vector2i index = itemMap.CalcIndex(enemy, direction);
+            return itemMap.IsInside(index) && IsAllowTile(index);
+        }
         private bool IsAllowMove(Vector2f direction)
         {
             Vector2i index = itemMap.CalcIndex(player, direction);
             return itemMap.IsInside(index) && IsAllowTile(index);
+
         }
 
         private bool IsAllowTile(Vector2i index)
@@ -141,12 +179,18 @@ namespace PacMeaw
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
-            motion.Update(fixTime);
-            SmoothMovement();
+            if (enemyMotion == null || enemyMotion.IsFinished())
+            {
+                Start();
+            }
+            else
+            {
+                enemyMotion.Update(fixTime);
+                motion.Update(fixTime);
+                SmoothMovement();
+            }
 
-           
         }
-
         private SpriteEntity CreateTile(int tileCode)
         {
             var fragment = fragments.Fragments[tileCode];
@@ -176,9 +220,8 @@ namespace PacMeaw
             }
             itemMap.Clear();
             itemMap.CreateTileMap();
-           
-        }
 
+        }
 
     }
 }
