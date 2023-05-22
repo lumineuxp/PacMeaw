@@ -14,13 +14,14 @@ namespace PacMeaw
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             //ApplicationConfiguration.Initialize();
-            new Game().GameMain();
+            //Application.SetCompatibleTextRenderingDefault(false);
+            //new Game().GameMain();
 
             ApplicationConfiguration.Initialize();
 
             // สร้างและแสดงหน้า Home
-            //Home home = new Home();
-            //Application.Run(home);
+            Home home = new Home();
+            Application.Run(home);
 
             //Score score = new Score();
             //Application.Run(score);
