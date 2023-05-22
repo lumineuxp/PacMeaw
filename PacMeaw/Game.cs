@@ -47,14 +47,14 @@ namespace PacMeaw
             var tileArray = new int[13, 17]
             {
                 { 44, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45,46},
-                { 56,  0,  0,  0,  1,  0,  0,  0, 59,  1,  0,  0,  5,  0,  0,  1,58},
-                { 56,  1,  5,  5,00  5,  0,107,  0, 71,  1,106,  1,  5,  0, 92,  0,58},
+                { 56,  1,  0,  0,  1,  0,  0,  0, 59,  1,  0,  0,  5,  0,  0,  1,58},
+                { 56,  1,  5,  5,  5,  0,107,  0, 71,  1,106,  1,  5,  0, 92,  0,58},
                 { 56,  1, 95,  0,  0,  0, 17,  0,  0,  0,  0,  0, 83,  0,104,  0,58},
                 { 56,  1,  0,  0, 27,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,58},
                 { 68, 45, 82,  0, 28,  0, 44, 82,  1, 80, 46,  0,  1,  0, 80, 45,70},
                 { 43, 43, 43,  0, 27,  0, 56,  1,  1,  1, 56,  0,  1,  1, 43, 43,43},
                 { 44, 45, 82,  0, 28,  0, 68, 45, 45, 45, 70,  0,  1,  1, 80, 45,46},
-                { 56,  1, 1,  0,  0,  0,  0,  1,  0,  1,  1,  1,  0,  0,  0,  0,58},
+                { 56,  1, 1,  0,  0,  0,  0,  1,  0,  1,  1,  1,  0,  0,  0,  0, 58},
                 { 56,  1, 92,  1,  0,  0, 80, 81, 45, 81, 82,  0,  0,  0, 94,  0,58},
                 { 56,  1,104, 57,106,  0,  0,  1,  1,  1,  0,  0, 47,  0, 57,  0,58},
                 { 56,  1,  0,  0,  0,  0,  0,  1,  1,  1,  0,  0, 59,  0,  0,  0,58},
@@ -83,7 +83,7 @@ namespace PacMeaw
                 { 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2 },
                 { 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 }
             };
-            itemMap = new TileMap<SpriteEntity>(tileSize, itemArray, CreateItem);
+            itemMap = new TileMap<SpriteEntity>(tileSize, itemArray, CreateTileItem);
             visual.Add(itemMap);
 
             player = new Player();
@@ -142,16 +142,45 @@ namespace PacMeaw
 
         }
 
+        Queue<Vector2f> keyQueueEnemy = new Queue<Vector2f>();
         LinearMotion enemyMotion;
-        public void Start()
+        Vector2f randomDirection;
+        public void EnemyRandomPath()
         {
             float speed = 250;  // ความเร็วของศัตรู
-            Vector2f randomDirection = GetRandomDirection();
+            randomDirection = GetRandomDirection();
+            
+            if(enemyMotion == null)
+                enemyMotion = LinearMotion.Empty();
 
             if (IsAllowMoveEnemy(randomDirection))
             {
-                enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
+                keyQueueEnemy.Enqueue(randomDirection);
+                EnemySmoothMovement();
             }
+        }
+
+        private void EnemySmoothMovement()
+        {
+            if (!enemyMotion.IsFinished())
+                return;
+            
+            if (keyQueueEnemy.Count > 0)
+            {
+                var e = keyQueueEnemy.Dequeue();
+                randomDirection = e;
+            }
+            else if ( randomDirection  != new Vector2f(0, 0))
+                ;
+            else
+                randomDirection = enemyMotion.GetNormalizedDirection();
+
+            if (!IsAllowMoveEnemy(randomDirection))
+                return;
+
+            float speed = 250;
+            enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
+            
         }
 
         private Vector2f GetRandomDirection()
@@ -162,8 +191,9 @@ namespace PacMeaw
                     new Vector2f(0, 1),   // ลง
                     new Vector2f(0, -1)   // ขึ้น
              };
-
-            return directions[random.Next(0, 4)];
+            var randomDirection = directions[random.Next(0, 4)];
+            
+            return randomDirection;
         }
 
         private bool IsAllowMoveEnemy(Vector2f direction)
@@ -189,15 +219,17 @@ namespace PacMeaw
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
-            if (enemyMotion == null || enemyMotion.IsFinished())
+            if (enemyMotion == null )
             {
-                Start();
+                EnemyRandomPath();
+                
             }
             else
             {
                 enemyMotion.Update(fixTime);
                 motion.Update(fixTime);
                 SmoothMovement();
+                EnemyRandomPath();
             }
 
         }
@@ -211,7 +243,7 @@ namespace PacMeaw
             return sprite;
         }
 
-        private SpriteEntity CreateItem(int tileCode)
+        private SpriteEntity CreateTileItem(int tileCode)
         {
             var fragment = itemFragments.Fragments[tileCode];
             var sprite = new SpriteEntity(fragment);
