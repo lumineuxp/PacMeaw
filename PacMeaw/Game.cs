@@ -157,8 +157,6 @@ namespace PacMeaw
                 }
 
             }
-
-            
         }
 
         private Vector2f GetRandomDirection()
