@@ -91,7 +91,7 @@ namespace PacMeaw
             visual.Add(player);
 
             enemy = new Enemy();
-            enemy.Position = new Vector2f(50, 50);
+            enemy.Position = new Vector2f(50, 750);
             visual.Add(enemy);
 
         }
@@ -100,7 +100,7 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-           
+            EnemyMovement();
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
@@ -142,16 +142,31 @@ namespace PacMeaw
 
         }
 
-        LinearMotion enemyMotion;
-        public void Start()
-        {
-            float speed = 250;  // ความเร็วของศัตรู
-            Vector2f randomDirection = GetRandomDirection();
+      
 
-            if (IsAllowMoveEnemy(randomDirection))
+        Queue<Vector2f> directionQueue = new Queue<Vector2f>();
+        LinearMotion enemyMotion;
+        public void EnemyMovement()
+        {
+               
+            float speed = 150;  // ความเร็วของศัตรู
+            Vector2f randomDirection = GetRandomDirection();
+            directionQueue.Enqueue(randomDirection);
+
+            Vector2f nextDirection;
+            // ตรวจสอบว่าคิวไม่ว่าง และต้องการให้ศัตรูเคลื่อนที่
+            if (directionQueue.Count > 0)
             {
-                enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
+                nextDirection = directionQueue.Dequeue();
+
+                if (IsAllowMoveEnemy(randomDirection))
+                {
+                   enemyMotion = new LinearMotion(enemy, speed, nextDirection * tileSize);
+                }
+
             }
+
+            
         }
 
         private Vector2f GetRandomDirection()
@@ -191,7 +206,8 @@ namespace PacMeaw
             base.PhysicsUpdate(fixTime);
             if (enemyMotion == null || enemyMotion.IsFinished())
             {
-                Start();
+                EnemyMovement();
+           
             }
             else
             {
@@ -200,7 +216,34 @@ namespace PacMeaw
                 SmoothMovement();
             }
 
+
         }
+
+        private Vector2f ChasePlayer()
+        {
+            Vector2i enemyIndex = itemMap.CalcIndex(enemy.Position);
+            Vector2i playerIndex = itemMap.CalcIndex(player.Position);
+
+            // คำนวณทิศทางเคลื่อนที่ตามตำแหน่งของผู้เล่น
+            Vector2i direction = playerIndex - enemyIndex;
+
+            // ปรับให้เป็นทิศทาง 4 ทิศทางเท่านั้น (ข้ามทิศทางเชิงเส้นตรง)
+            if (direction.X != 0)
+                direction.Y = 0;
+
+            // ปรับให้เป็นทิศทางเดียวกันที่มีความยาวเท่ากัน
+            if (direction.X < 0)
+                direction.X = -1;
+            else if (direction.X > 0)
+                direction.X = 1;
+            if (direction.Y < 0)
+                direction.Y = -1;
+            else if (direction.Y > 0)
+                direction.Y = 1;
+
+            return new Vector2f(direction.X, direction.Y);
+        }
+
         private SpriteEntity CreateTile(int tileCode)
         {
             var fragment = fragments.Fragments[tileCode];
