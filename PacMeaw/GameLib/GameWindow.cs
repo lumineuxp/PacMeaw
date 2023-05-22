@@ -229,10 +229,12 @@ namespace GameLib
             this.Draw(allObjs);
         }
 
-        void WindowClosed(object? sender, EventArgs e)
+        public void WindowClosed(object? sender, EventArgs e)
         {
             var window = (RenderWindow)sender!;
             window.Close();
+
         }
+       
     }
 }
