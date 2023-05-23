@@ -13,6 +13,9 @@ namespace PacMeaw
     public class Player : KinematicBody
     {
         AnimationStates states;
+        CollisionObj collisionObj;
+        int mode = 0;
+        
         public Player() 
         {
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
@@ -31,6 +34,36 @@ namespace PacMeaw
 
             states = new AnimationStates(stay, left, right, up ,down);
             Add(states);
+
+            var shape = new CollisionRect(sprite.GetGlobalBounds().AdjustSize(0.4f, 0.5f));
+            collisionObj = new CollisionObj(shape);
+            collisionObj.DebugDraw = false;
+            collisionObj.OnCollide += OnCollide;
+            Add(collisionObj);
+
+        }
+
+        private void OnCollide(CollisionObj objB, CollideData collideData)
+        {
+            if (mode == 0) // dog eat cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    
+                    this.Position = new Vector2f(50, 50);
+                    GameData.LifePoint -= 1;
+                }
+            }
+            else if (mode == 1) //power cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    var enemy = objB.Parent as Enemy;
+                    enemy.Position = new Vector2f(500, 350);
+                    GameData.Score += 500;
+
+                }
+            }
         }
 
         public override void PhysicsUpdate(float fixTime)
@@ -53,6 +86,10 @@ namespace PacMeaw
                 states.Animate(4);
           
   
+        }
+        public void ChangeMode(int mode)
+        {
+            this.mode = mode;
         }
     }
 }

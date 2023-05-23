@@ -5,7 +5,10 @@ using SFML.Window;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-//using System.Windows.Forms;
+using static System.Formats.Asn1.AsnWriter;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using System.Numerics;
+using System.Security.Policy;
 
 
 namespace PacMeaw
@@ -22,8 +25,11 @@ namespace PacMeaw
         TileMap<SpriteEntity> itemMap;
         FragmentArray itemFragments;
         Enemy enemy;
+        Enemy enemy2;
+        Enemy enemy3;
+        Enemy enemy4;
 
-        ScoreCount score = new ScoreCount();
+        //ScoreCount score = new ScoreCount();
         Label scoreLabel;
 
         const int scaling = 4;
@@ -36,8 +42,8 @@ namespace PacMeaw
 
         public Game()
         {
-            score.SetScore(0);
-            scoreLabel = new Label(String.Format("Score: {0}", score.GetScore()), "Early GameBoy.ttf", 35);
+            
+            scoreLabel = new Label(String.Format("Score: {0}", GameData.Score.ToString()), "Early GameBoy.ttf", 35);
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
 
@@ -91,8 +97,14 @@ namespace PacMeaw
             visual.Add(player);
 
             enemy = new Enemy();
-            enemy.Position = new Vector2f(50, 50);
+            enemy.Position = new Vector2f(500, 350);
             visual.Add(enemy);
+
+            enemy2 = new Enemy();
+            enemy2.Position = new Vector2f(500, 350);
+            visual.Add(enemy2);
+
+            
 
         }
 
@@ -100,7 +112,7 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-           
+            //EnemyMovement();
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
@@ -140,6 +152,7 @@ namespace PacMeaw
             float speed = 250;
             motion = new LinearMotion(player, speed, direction * tileSize);
 
+           
         }
 
         Queue<Vector2f> keyQueueEnemy = new Queue<Vector2f>();
@@ -149,8 +162,8 @@ namespace PacMeaw
         {
             float speed = 250;  // ความเร็วของศัตรู
             randomDirection = GetRandomDirection();
-            
-            if(enemyMotion == null)
+
+            if (enemyMotion == null)
                 enemyMotion = LinearMotion.Empty();
 
             if (IsAllowMoveEnemy(randomDirection))
@@ -164,13 +177,13 @@ namespace PacMeaw
         {
             if (!enemyMotion.IsFinished())
                 return;
-            
+
             if (keyQueueEnemy.Count > 0)
             {
                 var e = keyQueueEnemy.Dequeue();
                 randomDirection = e;
             }
-            else if ( randomDirection  != new Vector2f(0, 0))
+            else if (randomDirection != new Vector2f(0, 0))
                 ;
             else
                 randomDirection = enemyMotion.GetNormalizedDirection();
@@ -180,8 +193,11 @@ namespace PacMeaw
 
             float speed = 250;
             enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
-            
+
         }
+
+
+
 
         private Vector2f GetRandomDirection()
         {
@@ -192,7 +208,7 @@ namespace PacMeaw
                     new Vector2f(0, -1)   // ขึ้น
              };
             var randomDirection = directions[random.Next(0, 4)];
-            
+
             return randomDirection;
         }
 
@@ -219,10 +235,10 @@ namespace PacMeaw
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
-            if (enemyMotion == null )
+            if (enemyMotion == null)
             {
                 EnemyRandomPath();
-                
+
             }
             else
             {
@@ -231,8 +247,34 @@ namespace PacMeaw
                 SmoothMovement();
                 EnemyRandomPath();
             }
-
+            scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
         }
+
+        private Vector2f ChasePlayer()
+        {
+            Vector2i enemyIndex = itemMap.CalcIndex(enemy.Position);
+            Vector2i playerIndex = itemMap.CalcIndex(player.Position);
+
+            // คำนวณทิศทางเคลื่อนที่ตามตำแหน่งของผู้เล่น
+            Vector2i direction = playerIndex - enemyIndex;
+
+            // ปรับให้เป็นทิศทาง 4 ทิศทางเท่านั้น (ข้ามทิศทางเชิงเส้นตรง)
+            if (direction.X != 0)
+                direction.Y = 0;
+
+            // ปรับให้เป็นทิศทางเดียวกันที่มีความยาวเท่ากัน
+            if (direction.X < 0)
+                direction.X = -1;
+            else if (direction.X > 0)
+                direction.X = 1;
+            if (direction.Y < 0)
+                direction.Y = -1;
+            else if (direction.Y > 0)
+                direction.Y = 1;
+
+            return new Vector2f(direction.X, direction.Y);
+        }
+
         private SpriteEntity CreateTile(int tileCode)
         {
             var fragment = fragments.Fragments[tileCode];
@@ -258,6 +300,9 @@ namespace PacMeaw
             int tileCode = itemMap.GetTileCode(index);
             if (tileCode == 0 ^ tileCode == 1)
             {
+                if (tileCode == 1)
+                    ChangeMode();
+
                 itemMap.SetTileCode(index, 3);
                 itemMap.Clear();
                 itemMap.CreateTileMap();
@@ -265,11 +310,11 @@ namespace PacMeaw
                 CountScore(tileCode);
             }
 
-            if (!itemMap.CheckExistItemOnTile() & i == 0 )
+            if (!itemMap.CheckExistItemOnTile() & i == 0)
             {
                 window.SetVisible(false);
                 Score scoreboard = new Score();
-                scoreboard.SetScore(score.GetScore());
+                scoreboard.SetScore(GameData.Score);
                 scoreboard.Show();
 
                 i += 1;
@@ -278,16 +323,21 @@ namespace PacMeaw
         public void CountScore(int tileCode)
         {
             if (tileCode == 0)
-                score.AddToScore(10);
-            else if (tileCode == 1)
-                score.AddToScore(100);
-
-            scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
+                //score.AddToScore(10);
+                GameData.Score += 10;
+            else if (tileCode == 1) //fish
+                GameData.Score += 100;
+           
+            scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
         }
 
-        
-
-
+        void ChangeMode()
+        {
+            player.ChangeMode(1);
+            enemy.ChangeMode(1);
+            enemy2.ChangeMode(1);
+            
+        }
 
     }
 }
