@@ -17,22 +17,11 @@ namespace PacMeaw
     {
         AnimationStates states;
         CollisionObj collisionObj;
-        TileMap<SpriteEntity> itemMap;
-        Player player;
-        Vector2f direction;
-        private int tileCode;
-        private bool isEatingFish = false;
-        private float eatTimer = 0f;
-        private float eatDuration = 20f;
-        private bool canEatEnemy = false;
-        public void SetItemMap(TileMap<SpriteEntity> map)
+        int mode = 0;
+        
+        public Player() 
         {
-            itemMap = map;
-        }
-
-        public Player(TileMap<SpriteEntity> itemMap) 
-        {
-            this.itemMap = itemMap;
+         
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
             var sprite = new SpriteEntity();
             Add(sprite);
@@ -61,8 +50,25 @@ namespace PacMeaw
 
         private void OnCollide(CollisionObj objB, CollideData Data)
         {
-         
+            if (mode == 0) // dog eat cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    
+                    this.Position = new Vector2f(50, 50);
+                    GameData.LifePoint -= 1;
+                }
+            }
+            else if (mode == 1) //power cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    var enemy = objB.Parent as Enemy;
+                    enemy.Position = new Vector2f(500, 350);
+                    GameData.Score += 500;
 
+                }
+            }
         }
 
    
@@ -84,6 +90,10 @@ namespace PacMeaw
                 states.Animate(3);
             else if (direction.Y > 0)
                 states.Animate(4);
+        }
+        public void ChangeMode(int mode)
+        {
+            this.mode = mode;
         }
     }
 }

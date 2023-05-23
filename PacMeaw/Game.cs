@@ -8,8 +8,7 @@ using System.Linq;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Numerics;
-using static System.Windows.Forms.AxHost;
-//using System.Windows.Forms;
+using System.Security.Policy;
 
 
 namespace PacMeaw
@@ -26,8 +25,11 @@ namespace PacMeaw
         TileMap<SpriteEntity> itemMap;
         FragmentArray itemFragments;
         Enemy enemy;
+        Enemy enemy2;
+        Enemy enemy3;
+        Enemy enemy4;
 
-        ScoreCount score = new ScoreCount();
+        //ScoreCount score = new ScoreCount();
         Label scoreLabel;
 
         const int scaling = 4;
@@ -42,8 +44,8 @@ namespace PacMeaw
 
         public Game()
         {
-            score.SetScore(0);
-            scoreLabel = new Label(String.Format("Score: {0}", score.GetScore()), "Early_GameBoy.ttf", 35);
+            
+            scoreLabel = new Label(String.Format("Score: {0}", GameData.Score.ToString()), "Early_GameBoy.ttf", 35);
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
 
@@ -53,8 +55,6 @@ namespace PacMeaw
             //sprite.Scale = new Vector2f(0.3f,0.3f);
             //sprite.Position = new Vector2f(400,910);
             //visual.Add(sprite);
-
-
 
             visual.Position = new Vector2f(75, 100);
             fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
@@ -101,15 +101,19 @@ namespace PacMeaw
             itemMap = new TileMap<SpriteEntity>(tileSize, itemArray, CreateTileItem);
             visual.Add(itemMap);
 
-            player = new Player(itemMap);
+            player = new Player();
             player.Position = new Vector2f(50, 50);
             visual.Add(player);
 
-            enemy = new Enemy(itemMap,lifePoint);
-            enemy.Position = new Vector2f(550, 350);
-            enemy.SetItemMap(itemMap);
+            enemy = new Enemy();
+            enemy.Position = new Vector2f(500, 350);
             visual.Add(enemy);
 
+            enemy2 = new Enemy();
+            enemy2.Position = new Vector2f(500, 350);
+            visual.Add(enemy2);
+
+            
             lifePoint = new LifePoint(3);
             lifePoint.Position = new Vector2f(150,900);
             allObjs.Add(lifePoint);
@@ -120,7 +124,10 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-    
+            GameData.LifePoint = 3;
+
+            
+
             window.SetKeyRepeatEnabled(false);
            
             window.RunGameLoop(allObjs);
@@ -161,14 +168,12 @@ namespace PacMeaw
             float speed = 250;
             motion = new LinearMotion(player, speed, direction * tileSize);
 
+           
         }
 
         Queue<Vector2f> keyQueueEnemy = new Queue<Vector2f>();
         LinearMotion enemyMotion;
         Vector2f randomDirection;
-
-       
-
         public void EnemyRandomPath()
         {
             float speed = 250;  // ความเร็วของศัตรู
@@ -207,18 +212,21 @@ namespace PacMeaw
 
         }
 
-    private Vector2f GetRandomDirection()
-    {
-        Vector2f[] directions = {
+
+
+
+        private Vector2f GetRandomDirection()
+        {
+            Vector2f[] directions = {
                     new Vector2f(1, 0),   // ขวา
                     new Vector2f(-1, 0),  // ซ้าย
                     new Vector2f(0, 1),   // ลง
                     new Vector2f(0, -1)   // ขึ้น
              };
-        var randomDirection = directions[random.Next(0, 4)];
+            var randomDirection = directions[random.Next(0, 4)];
 
-        return randomDirection;
-    }
+            return randomDirection;
+        }
 
     private bool IsAllowMoveEnemy(Vector2f direction)
     {
@@ -240,23 +248,47 @@ namespace PacMeaw
         return tileCode != 2;
     }
 
-    public override void PhysicsUpdate(float fixTime)
-    {
-        base.PhysicsUpdate(fixTime);
-        if (enemyMotion == null)
+        public override void PhysicsUpdate(float fixTime)
         {
-            EnemyRandomPath();
+            base.PhysicsUpdate(fixTime);
+            if (enemyMotion == null)
+            {
+                EnemyRandomPath();
+
+            }
+            else
+            {
+                enemyMotion.Update(fixTime);
+                motion.Update(fixTime);
+                SmoothMovement();
+                EnemyRandomPath();
+            }
+            scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
+
+            //if (GameData.LifePoint == 0 & i ==0)
+            //{
+            //    window.SetVisible(false);
+            //    Score scoreboard = new Score();
+            //    scoreboard.SetScore(GameData.Score);
+            //    scoreboard.Show();
+
+            //    i++;
+            //}
+
+            if(GameData.LifePoint >= 0)
+            {
+     
+               allObjs.Remove(lifePoint);
+               lifePoint = new LifePoint(GameData.LifePoint);
+               lifePoint.Position = new Vector2f(150, 900);
+               allObjs.Add(lifePoint);
+
+            }
+
+
+
 
         }
-        else
-        {
-            enemyMotion.Update(fixTime);
-            motion.Update(fixTime);
-            SmoothMovement();
-            EnemyRandomPath();
-            
-        }
-    }
 
     private Vector2f ChasePlayer()
     {
@@ -293,53 +325,64 @@ namespace PacMeaw
         return sprite;
     }
 
-    private SpriteEntity CreateTileItem(int tileCode)
-    {
-        var fragment = itemFragments.Fragments[tileCode];
-        var sprite = new SpriteEntity(fragment);
-        sprite.Origin = ((FloatRect)fragment.Rect).GetSize() / 2;
-        sprite.Scale = scailngVector / 25;
-        return sprite;
-    }
-
-    public void EatItem(Vector2f direction)
-    {
-        Vector2i index = itemMap.CalcIndex(player, direction);
-        int tileCode = itemMap.GetTileCode(index);
-        if (tileCode == 0 ^ tileCode == 1)
+        private SpriteEntity CreateTileItem(int tileCode)
         {
-            itemMap.SetTileCode(index, 3);
-            itemMap.Clear();
-            itemMap.CreateTileMap(); 
+            var fragment = itemFragments.Fragments[tileCode];
+            var sprite = new SpriteEntity(fragment);
+            sprite.Origin = ((FloatRect)fragment.Rect).GetSize() / 2;
+            sprite.Scale = scailngVector / 25;
+            return sprite;
+        }
+
+        private void EatItem(Vector2f direction)
+        {
+            Vector2i index = itemMap.CalcIndex(player, direction);
+            int tileCode = itemMap.GetTileCode(index);
+            if (tileCode == 0 ^ tileCode == 1)
+            {
+                if (tileCode == 1)
+                    ChangeMode();
+
+                itemMap.SetTileCode(index, 3);
+                itemMap.Clear();
+                itemMap.CreateTileMap();
 
             CountScore(tileCode);
 
          }
 
-        if (!itemMap.CheckExistItemOnTile() & i == 0)
-        {
-            window.SetVisible(false);
-            Score scoreboard = new Score();
-            scoreboard.SetScore(score.GetScore());
-            scoreboard.Show();
+            if (!itemMap.CheckExistItemOnTile() & i == 0)
+            {
+                window.SetVisible(false);
+                Score scoreboard = new Score();
+                scoreboard.SetScore(GameData.Score);
+                scoreboard.Show();
 
-            i += 1;
+                i += 1;
+            }
         }
-    }
-      public void CountScore(int tileCode)
-       {
-         if (tileCode == 0)
-            score.AddToScore(10);
-         else if (tileCode == 1)
-            score.AddToScore(100);
+        public void CountScore(int tileCode)
+        {
+            if (tileCode == 0)
+                //score.AddToScore(10);
+                GameData.Score += 10;
+            else if (tileCode == 1) //fish
+                GameData.Score += 100;
+           
+            scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
+        }
 
-         scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
-       }
-
+        void ChangeMode()
+        {
+            player.ChangeMode(1);
+            enemy.ChangeMode(1);
+            enemy2.ChangeMode(1);
+            
+        }
         public void RemoveImageLifePoint() 
         {
             // ลบรูปภาพ lifepoint.png ตามตำแหน่งที่ต้องการ
-            for (int i = lifePoint.lifeSprites.Count; i < lifePoint.lifeSprites.Count; i++)
+            for (int i = 0; i < lifePoint.lifeSprites.Count; i++)
             {
                 var spriteLifePoint = lifePoint.lifeSprites[i];
                 allObjs.Remove(spriteLifePoint);
