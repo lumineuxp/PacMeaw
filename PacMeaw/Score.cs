@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace PacMeaw
 {
@@ -21,6 +22,7 @@ namespace PacMeaw
             pictureBox1.Parent = pictureBox4;
             pictureBox2.Parent = pictureBox4;
             RestartBtn.Parent = pictureBox4;
+            StatusLbl.Parent = pictureBox1;
 
         }
 
@@ -29,6 +31,10 @@ namespace PacMeaw
             NumScoreLabel.Text = score.ToString();
         }
 
+        public void SetText(string text)
+        {
+            StatusLbl.Text = text;
+        }
         private void RestartBtn_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -65,7 +71,7 @@ namespace PacMeaw
             this.Hide();
             Home home = new Home();
             home.ShowDialog();
-            
+
         }
     }
 }

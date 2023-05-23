@@ -35,6 +35,7 @@
             pictureBox1 = new System.Windows.Forms.PictureBox();
             pictureBox3 = new System.Windows.Forms.PictureBox();
             pictureBox4 = new System.Windows.Forms.PictureBox();
+            StatusLbl = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
@@ -97,7 +98,7 @@
             // pictureBox1
             // 
             pictureBox1.BackColor = System.Drawing.Color.Transparent;
-            pictureBox1.Image = Properties.Resources.tableScore;
+            pictureBox1.Image = Properties.Resources.table2;
             pictureBox1.Location = new System.Drawing.Point(94, 51);
             pictureBox1.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
@@ -130,12 +131,25 @@
             pictureBox4.TabStop = false;
             pictureBox4.Click += pictureBox4_Click;
             // 
+            // StatusLbl
+            // 
+            StatusLbl.AutoSize = true;
+            StatusLbl.BackColor = System.Drawing.Color.Transparent;
+            StatusLbl.Font = new System.Drawing.Font("Berlin Sans FB", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            StatusLbl.ForeColor = System.Drawing.Color.PapayaWhip;
+            StatusLbl.Location = new System.Drawing.Point(83, 18);
+            StatusLbl.Name = "StatusLbl";
+            StatusLbl.Size = new System.Drawing.Size(156, 59);
+            StatusLbl.TabIndex = 12;
+            StatusLbl.Text = "label1";
+            // 
             // Score
             // 
             AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             BackColor = System.Drawing.SystemColors.AppWorkspace;
             ClientSize = new System.Drawing.Size(653, 599);
+            Controls.Add(StatusLbl);
             Controls.Add(pictureBox3);
             Controls.Add(scoretext);
             Controls.Add(pictureBox2);
@@ -162,5 +176,6 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox3;
         private System.Windows.Forms.PictureBox pictureBox4;
+        private System.Windows.Forms.Label StatusLbl;
     }
 }

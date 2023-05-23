@@ -9,7 +9,7 @@ using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Numerics;
 using System.Security.Policy;
-
+using System.Timers;
 
 namespace PacMeaw
 {
@@ -28,8 +28,7 @@ namespace PacMeaw
         Enemy enemy2;
         Enemy enemy3;
         Enemy enemy4;
-
-        //ScoreCount score = new ScoreCount();
+        
         Label scoreLabel;
 
         const int scaling = 4;
@@ -38,10 +37,12 @@ namespace PacMeaw
         int i = 0;
 
         Random random = new Random();
-        CollisionObj collisionObj;
+        
         LifePoint lifePoint;
-       
 
+        private Timer modeChangeTimer;
+       
+        
         public Game()
         {
             
@@ -49,14 +50,8 @@ namespace PacMeaw
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
 
-            //var texture = new Texture("lifepoint.png");
-            //var sprite = new SpriteEntity();
-            //sprite.Texture = texture;
-            //sprite.Scale = new Vector2f(0.3f,0.3f);
-            //sprite.Position = new Vector2f(400,910);
-            //visual.Add(sprite);
 
-            visual.Position = new Vector2f(75, 100);
+           visual.Position = new Vector2f(75, 100);
             fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
 
             var tileArray = new int[13, 17]
@@ -66,9 +61,9 @@ namespace PacMeaw
                 { 56,  1,  5,  5,  5,  0,107,  0, 71,  1,106,  1,  5,  0, 92,  0,58},
                 { 56,  1, 95,  0,  0,  0, 17,  0,  0,  0,  0,  0, 83,  0,104,  0,58},
                 { 56,  1,  0,  0, 27,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,  0,58},
-                { 68, 45, 82,  0, 28,  0, 44, 82,  1, 80, 46,  0,  1,  0, 80, 45,70},
-                { 43, 43, 43,  0, 27,  0, 56,  1,  1,  1, 56,  0,  1,  1, 43, 43,43},
-                { 44, 45, 82,  0, 28,  0, 68, 45, 45, 45, 70,  0,  1,  1, 80, 45,46},
+                { 68, 45, 46,  0, 28,  0, 44, 82,  1, 80, 46,  0,  1,  0, 44, 45,70},
+                { 43, 43, 56,  0, 27,  0, 56,  1,  1,  1, 56,  0,  1,  1, 58, 43,43},
+                { 44, 45, 70,  0, 28,  0, 68, 45, 45, 45, 70,  0,  1,  1, 68, 45,46},
                 { 56,  1, 1,  0,  0,  0,  0,  1,  0,  1,  1,  1,  0,  0,  0,  0, 58},
                 { 56,  1, 92,  1,  0,  0, 80, 81, 45, 81, 82,  0,  0,  0, 94,  0,58},
                 { 56,  1,104, 57,106,  0,  0,  1,  1,  1,  0,  0, 47,  0, 57,  0,58},
@@ -90,7 +85,7 @@ namespace PacMeaw
                 { 2, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 2, 0, 2, 0, 2 },
                 { 2, 1, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 },
                 { 2, 2, 2, 0, 2, 0, 2, 2, 3, 2, 2, 0, 0, 0, 2, 2, 2 },
-                { 3, 3, 3, 0, 2, 0, 2, 3, 3, 3, 2, 0, 0, 0, 3, 3, 3 },
+                { 2, 3, 2, 0, 2, 0, 2, 3, 3, 3, 2, 0, 0, 0, 2, 3, 2 },
                 { 2, 2, 2, 0, 2, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 2, 2 },
                 { 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2 },
                 { 2, 0, 2, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 2, 0, 2 },
@@ -124,6 +119,10 @@ namespace PacMeaw
             lifePoint = new LifePoint(3);
             lifePoint.Position = new Vector2f(150,900);
             allObjs.Add(lifePoint);
+
+            modeChangeTimer = new Timer(5000); // 5000 milliseconds = 5 seconds
+            modeChangeTimer.Elapsed += OnModeChangeTimerElapsed;
+            modeChangeTimer.AutoReset = false; // Only fire the event once
 
         }
 
@@ -382,6 +381,7 @@ namespace PacMeaw
                 window.SetVisible(false);
                 Score scoreboard = new Score();
                 scoreboard.SetScore(GameData.Score);
+                scoreboard.SetText("Game Over");
                 scoreboard.Show();
 
                 i++;
@@ -400,31 +400,7 @@ namespace PacMeaw
          
         }
 
-    private Vector2f ChasePlayer()
-    {
-        Vector2i enemyIndex = itemMap.CalcIndex(enemy.Position);
-        Vector2i playerIndex = itemMap.CalcIndex(player.Position);
-
-        // คำนวณทิศทางเคลื่อนที่ตามตำแหน่งของผู้เล่น
-        Vector2i direction = playerIndex - enemyIndex;
-
-        // ปรับให้เป็นทิศทาง 4 ทิศทางเท่านั้น (ข้ามทิศทางเชิงเส้นตรง)
-        if (direction.X != 0)
-            direction.Y = 0;
-
-        // ปรับให้เป็นทิศทางเดียวกันที่มีความยาวเท่ากัน
-        if (direction.X < 0)
-            direction.X = -1;
-        else if (direction.X > 0)
-            direction.X = 1;
-        if (direction.Y < 0)
-            direction.Y = -1;
-        else if (direction.Y > 0)
-            direction.Y = 1;
-
-        return new Vector2f(direction.X, direction.Y);
-    }
-
+   
     private SpriteEntity CreateTile(int tileCode)
     {
         var fragment = fragments.Fragments[tileCode];
@@ -451,7 +427,7 @@ namespace PacMeaw
             if (tileCode == 0 ^ tileCode == 1)
             {
                 if (tileCode == 1)
-                    ChangeMode();
+                    ChangeMode(1);
 
                 itemMap.SetTileCode(index, 3);
                 itemMap.Clear();
@@ -466,6 +442,7 @@ namespace PacMeaw
                 window.SetVisible(false);
                 Score scoreboard = new Score();
                 scoreboard.SetScore(GameData.Score);
+                scoreboard.SetText("Congrats!!");
                 scoreboard.Show();
 
                 i += 1;
@@ -474,32 +451,49 @@ namespace PacMeaw
         public void CountScore(int tileCode)
         {
             if (tileCode == 0)
-                //score.AddToScore(10);
+  
                 GameData.Score += 10;
             else if (tileCode == 1) //fish
                 GameData.Score += 100;
            
             scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
         }
+       
 
-        void ChangeMode()
+        void ChangeMode(int mode)
         {
-            player.ChangeMode(1);
-            enemy.ChangeMode(1);
-            enemy2.ChangeMode(1);
-            enemy3.ChangeMode(1);
-            enemy4.ChangeMode(1);
-
-        }
-        public void RemoveImageLifePoint() 
-        {
-            // ลบรูปภาพ lifepoint.png ตามตำแหน่งที่ต้องการ
-            for (int i = 0; i < lifePoint.lifeSprites.Count; i++)
+            if (mode == 0) //default
             {
-                var spriteLifePoint = lifePoint.lifeSprites[i];
-                allObjs.Remove(spriteLifePoint);
+                player.ChangeMode(0);
+                enemy.ChangeMode(0);
+                enemy2.ChangeMode(0);
+                enemy3.ChangeMode(0);
+                enemy4.ChangeMode(0);
+               
             }
+            else if (mode == 1) //power cat 
+            {
+                player.ChangeMode(1);
+                enemy.ChangeMode(1);
+                enemy2.ChangeMode(1);
+                enemy3.ChangeMode(1);
+                enemy4.ChangeMode(1);                
+
+                StartModeChangeTimer();
+            }
+            
+
         }
+
+        private void OnModeChangeTimerElapsed(object sender, ElapsedEventArgs e)
+        {
+            ChangeMode(0);
+        }
+        private void StartModeChangeTimer()
+        {
+            modeChangeTimer.Start();
+        }
+
 
     }
 }
