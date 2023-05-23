@@ -1,4 +1,5 @@
 ﻿using SFML.Graphics;
+using SFML.System;
 
 namespace GameLib
 {
@@ -6,5 +7,7 @@ namespace GameLib
     {
         public FloatRect OverlapRect;
         public bool FirstContact;
+
+        //public Vector2i TileIndex { get; set; }
     }
 }

@@ -8,6 +8,7 @@ using System.Linq;
 using static System.Formats.Asn1.AsnWriter;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Numerics;
+using static System.Windows.Forms.AxHost;
 //using System.Windows.Forms;
 
 
@@ -35,7 +36,9 @@ namespace PacMeaw
         int i = 0;
 
         Random random = new Random();
-
+        CollisionObj collisionObj;
+        LifePoint lifePoint;
+       
 
         public Game()
         {
@@ -43,6 +46,15 @@ namespace PacMeaw
             scoreLabel = new Label(String.Format("Score: {0}", score.GetScore()), "Early_GameBoy.ttf", 35);
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
+
+            //var texture = new Texture("lifepoint.png");
+            //var sprite = new SpriteEntity();
+            //sprite.Texture = texture;
+            //sprite.Scale = new Vector2f(0.3f,0.3f);
+            //sprite.Position = new Vector2f(400,910);
+            //visual.Add(sprite);
+
+
 
             visual.Position = new Vector2f(75, 100);
             fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
@@ -89,13 +101,18 @@ namespace PacMeaw
             itemMap = new TileMap<SpriteEntity>(tileSize, itemArray, CreateTileItem);
             visual.Add(itemMap);
 
-            player = new Player();
+            player = new Player(itemMap);
             player.Position = new Vector2f(50, 50);
             visual.Add(player);
 
-            enemy = new Enemy();
-            enemy.Position = new Vector2f(50, 750);
+            enemy = new Enemy(itemMap);
+            enemy.Position = new Vector2f(550, 350);
+            enemy.SetItemMap(itemMap);
             visual.Add(enemy);
+
+            lifePoint = new LifePoint();
+            lifePoint.Position = new Vector2f(150,900);
+            allObjs.Add(lifePoint);
 
         }
 
@@ -103,8 +120,9 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-            //EnemyMovement();
+    
             window.SetKeyRepeatEnabled(false);
+           
             window.RunGameLoop(allObjs);
 
         }
@@ -148,6 +166,9 @@ namespace PacMeaw
         Queue<Vector2f> keyQueueEnemy = new Queue<Vector2f>();
         LinearMotion enemyMotion;
         Vector2f randomDirection;
+
+       
+
         public void EnemyRandomPath()
         {
             float speed = 250;  // ความเร็วของศัตรู
@@ -233,6 +254,7 @@ namespace PacMeaw
             motion.Update(fixTime);
             SmoothMovement();
             EnemyRandomPath();
+            
         }
     }
 
@@ -280,7 +302,7 @@ namespace PacMeaw
         return sprite;
     }
 
-    private void EatItem(Vector2f direction)
+    public void EatItem(Vector2f direction)
     {
         Vector2i index = itemMap.CalcIndex(player, direction);
         int tileCode = itemMap.GetTileCode(index);
@@ -288,10 +310,11 @@ namespace PacMeaw
         {
             itemMap.SetTileCode(index, 3);
             itemMap.Clear();
-            itemMap.CreateTileMap();
+            itemMap.CreateTileMap(); 
 
             CountScore(tileCode);
-        }
+
+         }
 
         if (!itemMap.CheckExistItemOnTile() & i == 0)
         {
@@ -303,18 +326,15 @@ namespace PacMeaw
             i += 1;
         }
     }
-    public void CountScore(int tileCode)
-    {
-        if (tileCode == 0)
+      public void CountScore(int tileCode)
+       {
+         if (tileCode == 0)
             score.AddToScore(10);
-        else if (tileCode == 1)
+         else if (tileCode == 1)
             score.AddToScore(100);
 
-        scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
+         scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
+       }
+
     }
-
-
-
-
-   }
 }

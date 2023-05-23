@@ -4,7 +4,10 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,8 +17,22 @@ namespace PacMeaw
     {
         AnimationStates states;
         CollisionObj collisionObj;
-        public Player() 
+        TileMap<SpriteEntity> itemMap;
+        Player player;
+        Vector2f direction;
+        private int tileCode;
+        private bool isEatingFish = false;
+        private float eatTimer = 0f;
+        private float eatDuration = 20f;
+        private bool canEatEnemy = false;
+        public void SetItemMap(TileMap<SpriteEntity> map)
         {
+            itemMap = map;
+        }
+
+        public Player(TileMap<SpriteEntity> itemMap) 
+        {
+            this.itemMap = itemMap;
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
             var sprite = new SpriteEntity();
             Add(sprite);
@@ -41,12 +58,14 @@ namespace PacMeaw
 
         }
 
-        private void OnCollide(CollisionObj objB, CollideData collideData)
+
+        private void OnCollide(CollisionObj objB, CollideData Data)
         {
-            //var enemy = objB.Parent as Enemy;
-            //enemy!.Detach();
+         
+
         }
 
+   
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
@@ -65,8 +84,6 @@ namespace PacMeaw
                 states.Animate(3);
             else if (direction.Y > 0)
                 states.Animate(4);
-          
-  
         }
     }
 }

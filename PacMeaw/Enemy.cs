@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,10 +20,20 @@ namespace PacMeaw
         TileMap<SpriteEntity> tileMap;
         Queue<int> directionQueue;  // สร้างคิวเพื่อเก็บค่าทิศทาง
         CollisionObj collisionObj;
+        TileMap<SpriteEntity> itemMap;
+        Player player;
+        int tileCode;
+        private bool isEatingFish = false;
+        private float eatTimer = 0f;
+        private float eatDuration = 20f;
 
-        public Enemy()
+        public void SetItemMap(TileMap<SpriteEntity> map)
         {
-            //this.tileMap = itemMap;
+            itemMap = map;
+        }
+        public Enemy(TileMap<SpriteEntity> itemMap)
+        {
+            this.tileMap = itemMap;
             random = new Random();
             //movementInterval = 1.0f;  // ช่วงเวลาที่ศัตรูจะเปลี่ยนทิศทางสุ่ม (เปลี่ยนตามความต้องการ)
             //directionQueue = new Queue<int>();  // สร้างคิวเมื่อสร้างออบเจ็กต์ Enemy
@@ -52,11 +63,15 @@ namespace PacMeaw
             Add(collisionObj);
         }
 
-        private void OnCollide(CollisionObj objB, CollideData collideData)
+        private void OnCollide(CollisionObj objB, CollideData Data)
         {
-            var player = objB.Parent as Player;
-            player!.Detach();
+          
+               var player = objB.Parent as Player;
+               player.Detach();
+                 
         }
+
+       
 
         public override void PhysicsUpdate(float fixTime)
         {
@@ -66,6 +81,7 @@ namespace PacMeaw
         public override void FrameUpdate(float deltaTime)
         {
             base.FrameUpdate(deltaTime);
+
         }
 
 
