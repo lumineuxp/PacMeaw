@@ -28,76 +28,140 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Score));
-            LevelLabel = new System.Windows.Forms.Label();
-            ScoreLabel = new System.Windows.Forms.Label();
             NumScoreLabel = new System.Windows.Forms.Label();
             RestartBtn = new System.Windows.Forms.Button();
+            pictureBox2 = new System.Windows.Forms.PictureBox();
+            scoretext = new System.Windows.Forms.Label();
+            pictureBox1 = new System.Windows.Forms.PictureBox();
+            pictureBox3 = new System.Windows.Forms.PictureBox();
+            pictureBox4 = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).BeginInit();
             SuspendLayout();
-            // 
-            // LevelLabel
-            // 
-            LevelLabel.AutoSize = true;
-            LevelLabel.Font = new System.Drawing.Font("Showcard Gothic", 28.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            LevelLabel.Location = new System.Drawing.Point(261, 9);
-            LevelLabel.Name = "LevelLabel";
-            LevelLabel.Size = new System.Drawing.Size(262, 59);
-            LevelLabel.TabIndex = 0;
-            LevelLabel.Text = "PacMeaw";
-            // 
-            // ScoreLabel
-            // 
-            ScoreLabel.AutoSize = true;
-            ScoreLabel.Font = new System.Drawing.Font("Showcard Gothic", 25.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            ScoreLabel.Location = new System.Drawing.Point(261, 159);
-            ScoreLabel.Name = "ScoreLabel";
-            ScoreLabel.Size = new System.Drawing.Size(188, 54);
-            ScoreLabel.TabIndex = 1;
-            ScoreLabel.Text = "Score :";
             // 
             // NumScoreLabel
             // 
-            NumScoreLabel.Font = new System.Drawing.Font("Showcard Gothic", 25.8000011F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
-            NumScoreLabel.Location = new System.Drawing.Point(455, 159);
+            NumScoreLabel.BackColor = System.Drawing.Color.Transparent;
+            NumScoreLabel.Font = new System.Drawing.Font("Berlin Sans FB", 25.8000011F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            NumScoreLabel.ForeColor = System.Drawing.SystemColors.Info;
+            NumScoreLabel.Location = new System.Drawing.Point(251, 158);
             NumScoreLabel.Name = "NumScoreLabel";
-            NumScoreLabel.Size = new System.Drawing.Size(133, 54);
+            NumScoreLabel.Size = new System.Drawing.Size(46, 40);
             NumScoreLabel.TabIndex = 2;
             NumScoreLabel.Text = "0";
             // 
             // RestartBtn
             // 
             RestartBtn.BackColor = System.Drawing.Color.Transparent;
+            RestartBtn.BackgroundImage = Properties.Resources.replay;
+            RestartBtn.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             RestartBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             RestartBtn.FlatAppearance.BorderSize = 0;
             RestartBtn.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            RestartBtn.Image = (System.Drawing.Image)resources.GetObject("RestartBtn.Image");
-            RestartBtn.Location = new System.Drawing.Point(335, 300);
+            RestartBtn.Location = new System.Drawing.Point(223, 365);
+            RestartBtn.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             RestartBtn.Name = "RestartBtn";
-            RestartBtn.Size = new System.Drawing.Size(114, 118);
+            RestartBtn.Size = new System.Drawing.Size(203, 48);
             RestartBtn.TabIndex = 3;
             RestartBtn.UseVisualStyleBackColor = false;
             RestartBtn.Click += RestartBtn_Click;
             // 
+            // pictureBox2
+            // 
+            pictureBox2.BackColor = System.Drawing.Color.Transparent;
+            pictureBox2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            pictureBox2.Image = Properties.Resources.home;
+            pictureBox2.Location = new System.Drawing.Point(149, 365);
+            pictureBox2.Name = "pictureBox2";
+            pictureBox2.Size = new System.Drawing.Size(68, 48);
+            pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBox2.TabIndex = 5;
+            pictureBox2.TabStop = false;
+            // 
+            // scoretext
+            // 
+            scoretext.AutoSize = true;
+            scoretext.BackColor = System.Drawing.Color.Transparent;
+            scoretext.Font = new System.Drawing.Font("Berlin Sans FB Demi", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point);
+            scoretext.ForeColor = System.Drawing.Color.PapayaWhip;
+            scoretext.Location = new System.Drawing.Point(207, 112);
+            scoretext.Name = "scoretext";
+            scoretext.Size = new System.Drawing.Size(127, 37);
+            scoretext.TabIndex = 7;
+            scoretext.Text = "SCORE :";
+            scoretext.Click += label1_Click;
+            // 
+            // pictureBox1
+            // 
+            pictureBox1.BackColor = System.Drawing.Color.Transparent;
+            pictureBox1.Image = Properties.Resources.tableScore;
+            pictureBox1.Location = new System.Drawing.Point(82, 38);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new System.Drawing.Size(397, 322);
+            pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBox1.TabIndex = 9;
+            pictureBox1.TabStop = false;
+            pictureBox1.Click += pictureBox1_Click;
+            // 
+            // pictureBox3
+            // 
+            pictureBox3.BackColor = System.Drawing.Color.Transparent;
+            pictureBox3.Image = Properties.Resources.pngwing_com_3;
+            pictureBox3.Location = new System.Drawing.Point(40, 82);
+            pictureBox3.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            pictureBox3.Name = "pictureBox3";
+            pictureBox3.Size = new System.Drawing.Size(161, 172);
+            pictureBox3.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBox3.TabIndex = 10;
+            pictureBox3.TabStop = false;
+            // 
+            // pictureBox4
+            // 
+            pictureBox4.BackColor = System.Drawing.Color.Transparent;
+            pictureBox4.Image = Properties.Resources._45908;
+            pictureBox4.Location = new System.Drawing.Point(0, 0);
+            pictureBox4.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            pictureBox4.Name = "pictureBox4";
+            pictureBox4.Size = new System.Drawing.Size(678, 449);
+            pictureBox4.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            pictureBox4.TabIndex = 11;
+            pictureBox4.TabStop = false;
+            pictureBox4.Click += pictureBox4_Click;
+            // 
             // Score
             // 
-            AutoScaleDimensions = new System.Drawing.SizeF(8F, 20F);
+            AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            ClientSize = new System.Drawing.Size(800, 450);
+            BackColor = System.Drawing.SystemColors.AppWorkspace;
+            ClientSize = new System.Drawing.Size(571, 449);
+            Controls.Add(pictureBox3);
+            Controls.Add(scoretext);
+            Controls.Add(pictureBox2);
             Controls.Add(RestartBtn);
             Controls.Add(NumScoreLabel);
-            Controls.Add(ScoreLabel);
-            Controls.Add(LevelLabel);
+            Controls.Add(pictureBox1);
+            Controls.Add(pictureBox4);
+            Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             Name = "Score";
             Text = "Score";
+            Load += Score_Load;
+            ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox3).EndInit();
+            ((System.ComponentModel.ISupportInitialize)pictureBox4).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
-
-        private System.Windows.Forms.Label LevelLabel;
-        private System.Windows.Forms.Label ScoreLabel;
         private System.Windows.Forms.Label NumScoreLabel;
         private System.Windows.Forms.Button RestartBtn;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.Label scoretext;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.PictureBox pictureBox3;
+        private System.Windows.Forms.PictureBox pictureBox4;
     }
 }
