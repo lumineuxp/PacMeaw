@@ -59,5 +59,13 @@ namespace PacMeaw
         {
 
         }
+
+        private void pictureBox2_Click(object sender, EventArgs e)
+        {
+            this.Hide();
+            Home home = new Home();
+            home.ShowDialog();
+            
+        }
     }
 }
