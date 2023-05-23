@@ -42,7 +42,7 @@ namespace PacMeaw
 
         public Game()
         {
-            
+           
             scoreLabel = new Label(String.Format("Score: {0}", GameData.Score.ToString()), "Early GameBoy.ttf", 35);
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
@@ -104,7 +104,13 @@ namespace PacMeaw
             enemy2.Position = new Vector2f(500, 350);
             visual.Add(enemy2);
 
-            
+            enemy3 = new Enemy();
+            enemy3.Position = new Vector2f(700, 600);
+            visual.Add(enemy3);
+
+            enemy4 = new Enemy();
+            enemy4.Position = new Vector2f(300, 600);
+            visual.Add(enemy4);
 
         }
 
@@ -158,46 +164,142 @@ namespace PacMeaw
         Queue<Vector2f> keyQueueEnemy = new Queue<Vector2f>();
         LinearMotion enemyMotion;
         Vector2f randomDirection;
+        Queue<Vector2f> keyQueueEnemy2 = new Queue<Vector2f>();
+        LinearMotion enemyMotion2;
+        Vector2f randomDirection2;
+        Queue<Vector2f> keyQueueEnemy3 = new Queue<Vector2f>();
+        LinearMotion enemyMotion3;
+        Vector2f randomDirection3;
+        Queue<Vector2f> keyQueueEnemy4 = new Queue<Vector2f>();
+        LinearMotion enemyMotion4;
+        Vector2f randomDirection4;
+        float speed = 150;
         public void EnemyRandomPath()
         {
-            float speed = 250;  // ความเร็วของศัตรู
+           
             randomDirection = GetRandomDirection();
 
             if (enemyMotion == null)
                 enemyMotion = LinearMotion.Empty();
 
-            if (IsAllowMoveEnemy(randomDirection))
+            if (IsAllowMoveEnemy(randomDirection, enemy))
             {
                 keyQueueEnemy.Enqueue(randomDirection);
-                EnemySmoothMovement();
+                if (!enemyMotion.IsFinished())
+                    return;
+
+                if (keyQueueEnemy.Count > 0)
+                {
+                    var e = keyQueueEnemy.Dequeue();
+                    randomDirection = e;
+                }
+                else if (randomDirection != new Vector2f(0, 0))
+                    ;
+                else
+                    randomDirection = enemyMotion.GetNormalizedDirection();
+
+                if (!IsAllowMoveEnemy(randomDirection, enemy))
+                    return;
+
+                
+                enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
             }
         }
-
-        private void EnemySmoothMovement()
+        public void Enemy2RandomPath()
         {
-            if (!enemyMotion.IsFinished())
-                return;
+           
+            randomDirection2 = GetRandomDirection();
 
-            if (keyQueueEnemy.Count > 0)
+            if (enemyMotion2 == null)
+                enemyMotion2 = LinearMotion.Empty();
+
+            if (IsAllowMoveEnemy(randomDirection2, enemy2))
             {
-                var e = keyQueueEnemy.Dequeue();
-                randomDirection = e;
+                keyQueueEnemy2.Enqueue(randomDirection2);
+                if (!enemyMotion2.IsFinished())
+                    return;
+
+                if (keyQueueEnemy2.Count > 0)
+                {
+                    var e = keyQueueEnemy2.Dequeue();
+                    randomDirection2 = e;
+                }
+                else if (randomDirection2 != new Vector2f(0, 0))
+                    ;
+                else
+                    randomDirection2 = enemyMotion2.GetNormalizedDirection();
+
+                if (!IsAllowMoveEnemy(randomDirection2,enemy2))
+                    return;
+
+               
+                enemyMotion2 = new LinearMotion(enemy2, speed, randomDirection2 * tileSize);
             }
-            else if (randomDirection != new Vector2f(0, 0))
-                ;
-            else
-                randomDirection = enemyMotion.GetNormalizedDirection();
-
-            if (!IsAllowMoveEnemy(randomDirection))
-                return;
-
-            float speed = 250;
-            enemyMotion = new LinearMotion(enemy, speed, randomDirection * tileSize);
-
         }
 
+        public void Enemy3RandomPath()
+        {
+
+            randomDirection3 = GetRandomDirection();
+
+            if (enemyMotion3 == null)
+                enemyMotion3 = LinearMotion.Empty();
+
+            if (IsAllowMoveEnemy(randomDirection3, enemy3))
+            {
+                keyQueueEnemy3.Enqueue(randomDirection3);
+                if (!enemyMotion3.IsFinished())
+                    return;
+
+                if (keyQueueEnemy3.Count > 0)
+                {
+                    var e = keyQueueEnemy3.Dequeue();
+                    randomDirection3 = e;
+                }
+                else if (randomDirection3 != new Vector2f(0, 0))
+                    ;
+                else
+                    randomDirection3 = enemyMotion3.GetNormalizedDirection();
+
+                if (!IsAllowMoveEnemy(randomDirection3, enemy3))
+                    return;
 
 
+                enemyMotion3 = new LinearMotion(enemy3, speed, randomDirection3 * tileSize);
+            }
+        }
+
+        public void Enemy4RandomPath()
+        {
+
+            randomDirection4 = GetRandomDirection();
+
+            if (enemyMotion4 == null)
+                enemyMotion4 = LinearMotion.Empty();
+
+            if (IsAllowMoveEnemy(randomDirection4, enemy4))
+            {
+                keyQueueEnemy4.Enqueue(randomDirection4);
+                if (!enemyMotion4.IsFinished())
+                    return;
+
+                if (keyQueueEnemy4.Count > 0)
+                {
+                    var e = keyQueueEnemy4.Dequeue();
+                    randomDirection4 = e;
+                }
+                else if (randomDirection4 != new Vector2f(0, 0))
+                    ;
+                else
+                    randomDirection4 = enemyMotion4.GetNormalizedDirection();
+
+                if (!IsAllowMoveEnemy(randomDirection4, enemy4))
+                    return;
+
+
+                enemyMotion4 = new LinearMotion(enemy4, speed, randomDirection4 * tileSize);
+            }
+        }
 
         private Vector2f GetRandomDirection()
         {
@@ -212,11 +314,12 @@ namespace PacMeaw
             return randomDirection;
         }
 
-        private bool IsAllowMoveEnemy(Vector2f direction)
+        private bool IsAllowMoveEnemy(Vector2f direction,Transformable enemy)
         {
             Vector2i index = itemMap.CalcIndex(enemy, direction);
             return itemMap.IsInside(index) && IsAllowTile(index);
         }
+      
         private bool IsAllowMove(Vector2f direction)
         {
             Vector2i index = itemMap.CalcIndex(player, direction);
@@ -227,29 +330,37 @@ namespace PacMeaw
         private bool IsAllowTile(Vector2i index)
         {
             int tileCode = itemMap.GetTileCode(index);
-            //int[] edges = { 5, 17, 27, 28, 44, 45, 46, 47, 56, 57, 58, 59, 68, 70, 71, 80, 81, 82, 83, 94, 95, 104, 106, 107 };
-            //return !edges.Contains(tileCode);
+          
             return tileCode != 2;
         }
 
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
-            if (enemyMotion == null)
+            if (enemyMotion == null )
             {
                 EnemyRandomPath();
-
+                Enemy2RandomPath();
+                Enemy3RandomPath();
+                Enemy4RandomPath();
             }
             else
             {
                 enemyMotion.Update(fixTime);
+                enemyMotion2.Update(fixTime);
+                enemyMotion3.Update(fixTime);
+                enemyMotion4.Update(fixTime);
                 motion.Update(fixTime);
                 SmoothMovement();
                 EnemyRandomPath();
+                Enemy2RandomPath();
+                Enemy3RandomPath();
+                Enemy4RandomPath();
+
             }
             scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
 
-            if (GameData.LifePoint == 0 & i ==0)
+            if (GameData.LifePoint == 0 & i == 0)
             {
                 window.SetVisible(false);
                 Score scoreboard = new Score();
@@ -258,6 +369,8 @@ namespace PacMeaw
 
                 i++;
             }
+
+         
         }
 
         private Vector2f ChasePlayer()
@@ -346,7 +459,9 @@ namespace PacMeaw
             player.ChangeMode(1);
             enemy.ChangeMode(1);
             enemy2.ChangeMode(1);
-            
+            enemy3.ChangeMode(1);
+            enemy4.ChangeMode(1);
+
         }
 
     }

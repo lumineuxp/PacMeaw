@@ -29,21 +29,19 @@ namespace PacMeaw
             //movementInterval = 1.0f;  // ช่วงเวลาที่ศัตรูจะเปลี่ยนทิศทางสุ่ม (เปลี่ยนตามความต้องการ)
             //directionQueue = new Queue<int>();  // สร้างคิวเมื่อสร้างออบเจ็กต์ Enemy
 
-            var texture = TextureCache.Get("Sprite/enemy/dog.png");
+            var texture = TextureCache.Get("Sprite/enemy/floating skulls.png");
             var sprite = new SpriteEntity();
             Add(sprite);
-            sprite.Origin = new Vector2f(16, 23);
-            sprite.Scale = new Vector2f(3,3);
+            sprite.Origin = new Vector2f(20, 40);
+            sprite.Scale = new Vector2f(2,2);
 
-            var fragments = FragmentArray.Create(texture, 32, 32);
+            var fragments = FragmentArray.Create(texture, 48, 48);
             var duration = 0.75f;
-            var stay = new Animation(sprite, fragments.SubArray(0,1), duration);
-            var left = new Animation(sprite, fragments.SubArray(12,4), duration);
-            var right = new Animation(sprite, fragments.SubArray(4,4), duration);
-            var up = new Animation(sprite, fragments.SubArray(8,4), duration);
-            var down = new Animation(sprite, fragments.SubArray(0,4), duration);
+            var escape = new Animation(sprite, fragments.SubArray(57,3), duration);
+     
+            var chase = new Animation(sprite, fragments.SubArray(0,3), duration);
 
-            states = new AnimationStates(stay, left, right, up, down);
+            states = new AnimationStates(chase, escape);
             Add(states);
 
            
@@ -72,6 +70,13 @@ namespace PacMeaw
         public void ChangeMode(int mode)
         {
             this.mode = mode;
+            if (mode == 0)
+            {
+                states.Animate(0);
+            }else if (mode == 1)
+            {
+                states.Animate(1);
+            }
         }
 
     }
