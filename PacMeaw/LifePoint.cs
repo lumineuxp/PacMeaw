@@ -43,8 +43,9 @@ namespace PacMeaw
         {
             life -= value;
 
-            var game = new Game();
-            game.RemoveImageLifePoint(); // เรียกใช้เมธอดในคลาส Game เพื่อลบรูปภาพ lifepoint.png ออกจากการแสดงผล
         }
+
+        
+
     }
 }
