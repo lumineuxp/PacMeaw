@@ -112,7 +112,7 @@ namespace PacMeaw
         {
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
-            //EnemyMovement();
+            GameData.LifePoint = 3;
             window.SetKeyRepeatEnabled(false);
             window.RunGameLoop(allObjs);
 
@@ -248,6 +248,16 @@ namespace PacMeaw
                 EnemyRandomPath();
             }
             scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
+
+            if (GameData.LifePoint == 0 & i ==0)
+            {
+                window.SetVisible(false);
+                Score scoreboard = new Score();
+                scoreboard.SetScore(GameData.Score);
+                scoreboard.Show();
+
+                i++;
+            }
         }
 
         private Vector2f ChasePlayer()
