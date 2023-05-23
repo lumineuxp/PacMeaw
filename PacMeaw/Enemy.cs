@@ -3,6 +3,7 @@ using SFML.Graphics;
 using SFML.System;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,7 +53,7 @@ namespace PacMeaw
             Add(collisionObj);
         }
 
-        private void OnCollide(CollisionObj objB, CollideData collideData)
+        private void OnCollide(CollisionObj objB, CollideData GameData)
         {
 
         }
@@ -65,6 +66,7 @@ namespace PacMeaw
         public override void FrameUpdate(float deltaTime)
         {
             base.FrameUpdate(deltaTime);
+
         }
 
         public void ChangeMode(int mode)

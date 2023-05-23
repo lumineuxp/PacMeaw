@@ -38,14 +38,23 @@ namespace PacMeaw
         int i = 0;
 
         Random random = new Random();
-
+        CollisionObj collisionObj;
+        LifePoint lifePoint;
+       
 
         public Game()
         {
-           
-            scoreLabel = new Label(String.Format("Score: {0}", GameData.Score.ToString()), "Early GameBoy.ttf", 35);
+            
+            scoreLabel = new Label(String.Format("Score: {0}", GameData.Score.ToString()), "Early_GameBoy.ttf", 35);
             scoreLabel.Position = new Vector2f(750, 25);
             allObjs.Add(scoreLabel);
+
+            //var texture = new Texture("lifepoint.png");
+            //var sprite = new SpriteEntity();
+            //sprite.Texture = texture;
+            //sprite.Scale = new Vector2f(0.3f,0.3f);
+            //sprite.Position = new Vector2f(400,910);
+            //visual.Add(sprite);
 
             visual.Position = new Vector2f(75, 100);
             fragments = FragmentArray.Create("Sprite/bg/Tilemap/tilemap_packed.png", 16, 16, 12, 12 * 11);
@@ -111,6 +120,10 @@ namespace PacMeaw
             enemy4 = new Enemy();
             enemy4.Position = new Vector2f(300, 600);
             visual.Add(enemy4);
+            
+            lifePoint = new LifePoint(3);
+            lifePoint.Position = new Vector2f(150,900);
+            allObjs.Add(lifePoint);
 
         }
 
@@ -119,7 +132,11 @@ namespace PacMeaw
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
             GameData.LifePoint = 3;
+
+            
+
             window.SetKeyRepeatEnabled(false);
+           
             window.RunGameLoop(allObjs);
 
         }
@@ -325,7 +342,7 @@ namespace PacMeaw
             Vector2i index = itemMap.CalcIndex(player, direction);
             return itemMap.IsInside(index) && IsAllowTile(index);
 
-        }
+    }
 
         private bool IsAllowTile(Vector2i index)
         {
@@ -361,7 +378,7 @@ namespace PacMeaw
             scoreLabel.SetText(String.Format("Score: {0}", GameData.Score.ToString()));
 
             if (GameData.LifePoint == 0 & i == 0)
-            {
+           {
                 window.SetVisible(false);
                 Score scoreboard = new Score();
                 scoreboard.SetScore(GameData.Score);
@@ -370,43 +387,53 @@ namespace PacMeaw
                 i++;
             }
 
+            if(GameData.LifePoint >= 0)
+            {
+     
+               allObjs.Remove(lifePoint);
+               lifePoint = new LifePoint(GameData.LifePoint);
+               lifePoint.Position = new Vector2f(150, 900);
+               allObjs.Add(lifePoint);
+
+            }
+
          
         }
 
-        private Vector2f ChasePlayer()
-        {
-            Vector2i enemyIndex = itemMap.CalcIndex(enemy.Position);
-            Vector2i playerIndex = itemMap.CalcIndex(player.Position);
+    private Vector2f ChasePlayer()
+    {
+        Vector2i enemyIndex = itemMap.CalcIndex(enemy.Position);
+        Vector2i playerIndex = itemMap.CalcIndex(player.Position);
 
-            // คำนวณทิศทางเคลื่อนที่ตามตำแหน่งของผู้เล่น
-            Vector2i direction = playerIndex - enemyIndex;
+        // คำนวณทิศทางเคลื่อนที่ตามตำแหน่งของผู้เล่น
+        Vector2i direction = playerIndex - enemyIndex;
 
-            // ปรับให้เป็นทิศทาง 4 ทิศทางเท่านั้น (ข้ามทิศทางเชิงเส้นตรง)
-            if (direction.X != 0)
-                direction.Y = 0;
+        // ปรับให้เป็นทิศทาง 4 ทิศทางเท่านั้น (ข้ามทิศทางเชิงเส้นตรง)
+        if (direction.X != 0)
+            direction.Y = 0;
 
-            // ปรับให้เป็นทิศทางเดียวกันที่มีความยาวเท่ากัน
-            if (direction.X < 0)
-                direction.X = -1;
-            else if (direction.X > 0)
-                direction.X = 1;
-            if (direction.Y < 0)
-                direction.Y = -1;
-            else if (direction.Y > 0)
-                direction.Y = 1;
+        // ปรับให้เป็นทิศทางเดียวกันที่มีความยาวเท่ากัน
+        if (direction.X < 0)
+            direction.X = -1;
+        else if (direction.X > 0)
+            direction.X = 1;
+        if (direction.Y < 0)
+            direction.Y = -1;
+        else if (direction.Y > 0)
+            direction.Y = 1;
 
-            return new Vector2f(direction.X, direction.Y);
-        }
+        return new Vector2f(direction.X, direction.Y);
+    }
 
-        private SpriteEntity CreateTile(int tileCode)
-        {
-            var fragment = fragments.Fragments[tileCode];
-            var sprite = new SpriteEntity(fragment);
-            sprite.Origin = new Vector2f(8, 8);
-            //sprite.Origin = ((FloatRect)fragment.Rect).GetSize()/2;
-            sprite.Scale = scailngVector;
-            return sprite;
-        }
+    private SpriteEntity CreateTile(int tileCode)
+    {
+        var fragment = fragments.Fragments[tileCode];
+        var sprite = new SpriteEntity(fragment);
+        sprite.Origin = new Vector2f(8, 8);
+        //sprite.Origin = ((FloatRect)fragment.Rect).GetSize()/2;
+        sprite.Scale = scailngVector;
+        return sprite;
+    }
 
         private SpriteEntity CreateTileItem(int tileCode)
         {
@@ -430,8 +457,9 @@ namespace PacMeaw
                 itemMap.Clear();
                 itemMap.CreateTileMap();
 
-                CountScore(tileCode);
-            }
+            CountScore(tileCode);
+
+         }
 
             if (!itemMap.CheckExistItemOnTile() & i == 0)
             {
@@ -462,6 +490,15 @@ namespace PacMeaw
             enemy3.ChangeMode(1);
             enemy4.ChangeMode(1);
 
+        }
+        public void RemoveImageLifePoint() 
+        {
+            // ลบรูปภาพ lifepoint.png ตามตำแหน่งที่ต้องการ
+            for (int i = 0; i < lifePoint.lifeSprites.Count; i++)
+            {
+                var spriteLifePoint = lifePoint.lifeSprites[i];
+                allObjs.Remove(spriteLifePoint);
+            }
         }
 
     }

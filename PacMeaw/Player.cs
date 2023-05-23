@@ -4,7 +4,10 @@ using SFML.System;
 using SFML.Window;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Numerics;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +21,7 @@ namespace PacMeaw
         
         public Player() 
         {
+         
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
             var sprite = new SpriteEntity();
             Add(sprite);
@@ -43,7 +47,8 @@ namespace PacMeaw
 
         }
 
-        private void OnCollide(CollisionObj objB, CollideData collideData)
+
+        private void OnCollide(CollisionObj objB, CollideData Data)
         {
             if (mode == 0) // dog eat cat
             {
@@ -66,6 +71,7 @@ namespace PacMeaw
             }
         }
 
+   
         public override void PhysicsUpdate(float fixTime)
         {
             base.PhysicsUpdate(fixTime);
@@ -84,8 +90,6 @@ namespace PacMeaw
                 states.Animate(3);
             else if (direction.Y > 0)
                 states.Animate(4);
-          
-  
         }
         public void ChangeMode(int mode)
         {
