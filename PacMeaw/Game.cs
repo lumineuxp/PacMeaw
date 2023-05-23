@@ -105,12 +105,12 @@ namespace PacMeaw
             player.Position = new Vector2f(50, 50);
             visual.Add(player);
 
-            enemy = new Enemy(itemMap);
+            enemy = new Enemy(itemMap,lifePoint);
             enemy.Position = new Vector2f(550, 350);
             enemy.SetItemMap(itemMap);
             visual.Add(enemy);
 
-            lifePoint = new LifePoint();
+            lifePoint = new LifePoint(3);
             lifePoint.Position = new Vector2f(150,900);
             allObjs.Add(lifePoint);
 
@@ -335,6 +335,16 @@ namespace PacMeaw
 
          scoreLabel.SetText(String.Format("Score: {0}", score.GetScore()));
        }
+
+        public void RemoveImageLifePoint() 
+        {
+            // ลบรูปภาพ lifepoint.png ตามตำแหน่งที่ต้องการ
+            for (int i = lifePoint.lifeSprites.Count; i < lifePoint.lifeSprites.Count; i++)
+            {
+                var spriteLifePoint = lifePoint.lifeSprites[i];
+                allObjs.Remove(spriteLifePoint);
+            }
+        }
 
     }
 }

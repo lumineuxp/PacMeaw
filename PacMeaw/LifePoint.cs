@@ -2,38 +2,32 @@
 using SFML.System;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PacMeaw
 {
     public class LifePoint : KinematicBody
     {
-        public LifePoint() 
+        public List<SpriteEntity> lifeSprites;
+        public int life;
+        
+
+        public LifePoint(int initialLife)
         {
-            //รูป1
+            life = initialLife;
+            lifeSprites = new List<SpriteEntity>();
+
             var texture = TextureCache.Get("lifepoint.png");
-            var sprite = new SpriteEntity(texture);
-            Add(sprite);
-            sprite.Origin = new Vector2f(16, 23);
-            sprite.Scale = new Vector2f(0.1f,0.1f);
-            //รูป2
-            var sprite2 = new SpriteEntity(texture);
-            sprite2.Origin = new Vector2f(16, 23);
-            sprite2.Scale = new Vector2f(0.1f, 0.1f);
-            sprite2.Position = new Vector2f(60, 0);
-            Add(sprite2);
-            //รูป3
-            var sprite3 = new SpriteEntity(texture);
-            sprite3.Origin = new Vector2f(16, 23);
-            sprite3.Scale = new Vector2f(0.1f, 0.1f);
-            sprite3.Position = new Vector2f(-60, 0);
-            Add(sprite3);
 
-
+            for (int i = 0; i < initialLife; i++)
+            {
+                var sprite = new SpriteEntity(texture);
+                sprite.Origin = new Vector2f(16, 23);
+                sprite.Scale = new Vector2f(0.1f, 0.1f);
+                sprite.Position = new Vector2f(i * 60 - 60, 0);
+                Add(sprite);
+                lifeSprites.Add(sprite);
+            }
         }
-        private int life;
 
         public int GetPoint()
         {
@@ -48,6 +42,9 @@ namespace PacMeaw
         public void RemoveToScore(int value)
         {
             life -= value;
+
+            var game = new Game();
+            game.RemoveImageLifePoint(); // เรียกใช้เมธอดในคลาส Game เพื่อลบรูปภาพ lifepoint.png ออกจากการแสดงผล
         }
     }
 }

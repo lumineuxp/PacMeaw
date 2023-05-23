@@ -26,15 +26,17 @@ namespace PacMeaw
         private bool isEatingFish = false;
         private float eatTimer = 0f;
         private float eatDuration = 20f;
-
+        LifePoint lifePoint;
+        Game game;
         public void SetItemMap(TileMap<SpriteEntity> map)
         {
             itemMap = map;
         }
-        public Enemy(TileMap<SpriteEntity> itemMap)
+        public Enemy(TileMap<SpriteEntity> itemMap, LifePoint lifePoint)
         {
             this.tileMap = itemMap;
-            random = new Random();
+            this.lifePoint = lifePoint;
+            //random = new Random();
             //movementInterval = 1.0f;  // ช่วงเวลาที่ศัตรูจะเปลี่ยนทิศทางสุ่ม (เปลี่ยนตามความต้องการ)
             //directionQueue = new Queue<int>();  // สร้างคิวเมื่อสร้างออบเจ็กต์ Enemy
 
@@ -63,15 +65,18 @@ namespace PacMeaw
             Add(collisionObj);
         }
 
-        private void OnCollide(CollisionObj objB, CollideData Data)
+        private void OnCollide(CollisionObj objB, CollideData GameData)
         {
           
-               var player = objB.Parent as Player;
-               player.Detach();
-                 
-        }
+            var player = objB.Parent as Player;
+            player.Detach();
 
-       
+            // ลดค่า life ของ lifePoint ลง 1
+            var lifePoint = new LifePoint(3);
+            lifePoint.RemoveToScore(1);
+           
+            
+        }
 
         public override void PhysicsUpdate(float fixTime)
         {
