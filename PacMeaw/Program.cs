@@ -19,7 +19,7 @@ namespace PacMeaw
 
             ApplicationConfiguration.Initialize();
 
-            // สร้างและแสดงหน้า Home
+            // ๏ฟฝ๏ฟฝ๏ฟฝาง๏ฟฝ๏ฟฝ๏ฟฝ๏ฟฝสด๏ฟฝหน๏ฟฝ๏ฟฝ Home
             Home home = new Home();
             Application.Run(home);
 
