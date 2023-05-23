@@ -14,6 +14,8 @@ namespace PacMeaw
     {
         AnimationStates states;
         CollisionObj collisionObj;
+        int mode = 0;
+        
         public Player() 
         {
             var texture = TextureCache.Get("Sprite/cat/cat1cut.png");
@@ -43,8 +45,25 @@ namespace PacMeaw
 
         private void OnCollide(CollisionObj objB, CollideData collideData)
         {
-            //var enemy = objB.Parent as Enemy;
-            //enemy!.Detach();
+            if (mode == 0) // dog eat cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    
+                    this.Position = new Vector2f(50, 50);
+                    GameData.LifePoint -= 1;
+                }
+            }
+            else if (mode == 1) //power cat
+            {
+                if (objB.Parent is Enemy)
+                {
+                    var enemy = objB.Parent as Enemy;
+                    enemy.Position = new Vector2f(500, 350);
+                    GameData.Score += 500;
+
+                }
+            }
         }
 
         public override void PhysicsUpdate(float fixTime)
@@ -67,6 +86,10 @@ namespace PacMeaw
                 states.Animate(4);
           
   
+        }
+        public void ChangeMode(int mode)
+        {
+            this.mode = mode;
         }
     }
 }

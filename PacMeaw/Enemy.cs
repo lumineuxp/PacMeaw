@@ -19,11 +19,13 @@ namespace PacMeaw
         TileMap<SpriteEntity> tileMap;
         Queue<int> directionQueue;  // สร้างคิวเพื่อเก็บค่าทิศทาง
         CollisionObj collisionObj;
+        int mode = 0;
 
         public Enemy()
         {
             //this.tileMap = itemMap;
             random = new Random();
+            
             //movementInterval = 1.0f;  // ช่วงเวลาที่ศัตรูจะเปลี่ยนทิศทางสุ่ม (เปลี่ยนตามความต้องการ)
             //directionQueue = new Queue<int>();  // สร้างคิวเมื่อสร้างออบเจ็กต์ Enemy
 
@@ -54,8 +56,7 @@ namespace PacMeaw
 
         private void OnCollide(CollisionObj objB, CollideData collideData)
         {
-            var player = objB.Parent as Player;
-            player!.Detach();
+
         }
 
         public override void PhysicsUpdate(float fixTime)
@@ -68,6 +69,10 @@ namespace PacMeaw
             base.FrameUpdate(deltaTime);
         }
 
+        public void ChangeMode(int mode)
+        {
+            this.mode = mode;
+        }
 
     }
 }
