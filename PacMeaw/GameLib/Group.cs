@@ -34,7 +34,7 @@ namespace GameLib
         public void Remove(Entity entity)
         {
             entities.Remove(entity);
-            entity._NotifyParentRemoved();
+            //entity._NotifyParentRemoved();
         }
         public void Clear()
         {

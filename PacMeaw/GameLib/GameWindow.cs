@@ -213,7 +213,7 @@ namespace GameLib
         }
 
         public Color UnusedSpaceColor { get; set; } = Color.Black;
-        public Color BackgroundColor { get; set; } = new Color(200, 200, 200);
+        public Color BackgroundColor { get; set; } = new Color(132, 198, 105);
 
         private void PhysicsUpdateAll(float physicsInterval)
         {
@@ -229,10 +229,12 @@ namespace GameLib
             this.Draw(allObjs);
         }
 
-        void WindowClosed(object? sender, EventArgs e)
+        public void WindowClosed(object? sender, EventArgs e)
         {
             var window = (RenderWindow)sender!;
             window.Close();
+
         }
+       
     }
 }
