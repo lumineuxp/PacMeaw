@@ -15,13 +15,13 @@ namespace PacMeaw
             // see https://aka.ms/applicationconfiguration.
             //ApplicationConfiguration.Initialize();
             //Application.SetCompatibleTextRenderingDefault(false);
-            new Game().GameMain();
+            //new Game().GameMain();
 
             ApplicationConfiguration.Initialize();
 
             // ���ҧ����ʴ�˹�� Home
-            //Home home = new Home();
-            //Application.Run(home);
+            Home home = new Home();
+            Application.Run(home);
 
             //Score score = new Score();
             //Application.Run(score);
