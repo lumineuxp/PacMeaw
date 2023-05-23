@@ -20,7 +20,7 @@ namespace PacMeaw
         public Home()
         {
             InitializeComponent();
-            GameName.Parent = pictureBox3;
+            pictureBox1.Parent = pictureBox3;
             button1.Parent = pictureBox3;
             pictureBox2.Parent = pictureBox3;
         }
@@ -53,6 +53,11 @@ namespace PacMeaw
         }
 
         private void pictureBox3_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void pictureBox1_Click(object sender, EventArgs e)
         {
 
         }

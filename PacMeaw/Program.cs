@@ -20,11 +20,11 @@ namespace PacMeaw
             ApplicationConfiguration.Initialize();
 
             // ���ҧ����ʴ�˹�� Home
-            Home home = new Home();
-            Application.Run(home);
+            //Home home = new Home();
+            //Application.Run(home);
 
-            //Score score = new Score();
-            //Application.Run(score);
+            Score score = new Score();
+            Application.Run(score);
 
         }
     }
