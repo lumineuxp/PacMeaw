@@ -131,7 +131,7 @@ namespace PacMeaw
             allObjs.Add(visual);
             allObjs.Add(this); //สำคัญในการดัก event       
             GameData.LifePoint = 3;
-
+            GameData.Score = 0;
             
 
             window.SetKeyRepeatEnabled(false);
